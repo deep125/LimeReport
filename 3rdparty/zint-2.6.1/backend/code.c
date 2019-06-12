@@ -94,19 +94,20 @@ static const char *C93Table[47] = {
 };
 
 /* Global Variables for Channel Code */
-int S[11], B[11];
-long value;
-long target_value;
-char pattern[30];
+static int S[11];
+static int B[11];
+static long value;
+static long target_value;
+static char pattern[30];
 
 /* Function Prototypes */
 void NextS(int Chan, int i, int MaxS, int MaxB);
 void NextB(int Chan, int i, int MaxB, int MaxS);
 
 /* *********************** CODE 11 ******************** */
-int code_11(struct zint_symbol *symbol, unsigned char source[], int length) { /* Code 11 */
+int code_11(struct zint_symbol *symbol, unsigned char source[], size_t length) { /* Code 11 */
 
-    unsigned int i;
+    size_t i;
     int h, c_digit, c_weight, c_count, k_digit, k_weight, k_count;
     int weight[128], error_number;
     char dest[1024]; /* 6 +  121 * 6 + 2 * 6 + 5 + 1 ~ 1024*/
@@ -130,16 +131,16 @@ int code_11(struct zint_symbol *symbol, unsigned char source[], int length) { /*
     strcpy(dest, "112211");
 
     /* Draw main body of barcode */
-    for (i = 0; i < (unsigned int) length; i++) {
-        lookup(SODIUM, C11Table, source[i], dest);
+    for (i = 0; i < length; i++) {
+        lookup(SODIUM, C11Table, (char)source[i], dest);
         if (source[i] == '-')
             weight[i] = 10;
         else
-            weight[i] = ctoi(source[i]);
+            weight[i] = ctoi((char)source[i]);
     }
 
     /* Calculate C checksum */
-    for (h = length - 1; h >= 0; h--) {
+    for (h = (int)(length - 1); h >= 0; h--) {
         c_count += (c_weight * weight[h]);
         c_weight++;
 
@@ -152,7 +153,7 @@ int code_11(struct zint_symbol *symbol, unsigned char source[], int length) { /*
     weight[length] = c_digit;
 
     /* Calculate K checksum */
-    for (h = length; h >= 0; h--) {
+    for (h = (int)length; h >= 0; h--) {
         k_count += (k_weight * weight[h]);
         k_weight++;
 
@@ -185,8 +186,8 @@ int code_11(struct zint_symbol *symbol, unsigned char source[], int length) { /*
 }
 
 /* Code 39 */
-int c39(struct zint_symbol *symbol, unsigned char source[], const size_t length) {
-    unsigned int i;
+int c39(struct zint_symbol *symbol, unsigned char source[], size_t length) {
+    size_t i;
     unsigned int counter;
     char check_digit;
     int error_number;
@@ -216,19 +217,19 @@ int c39(struct zint_symbol *symbol, unsigned char source[], const size_t length)
     /* Start character */
     strcpy(dest, "1211212111");
 
-    for (i = 0; i < (unsigned int) length; i++) {
-        lookup(SILVER, C39Table, source[i], dest);
-        counter += posn(SILVER, source[i]);
+    for (i = 0; i < length; i++) {
+        lookup(SILVER, C39Table, (char)source[i], dest);
+        counter += (unsigned)posn(SILVER, (char)source[i]);
     }
 
     if ((symbol->symbology == BARCODE_LOGMARS) || (symbol->option_2 == 1)) {
 
         counter = counter % 43;
         if (counter < 10) {
-            check_digit = itoc(counter);
+            check_digit = itoc((int)counter);
         } else {
             if (counter < 36) {
-                check_digit = (counter - 10) + 'A';
+                check_digit = (char)((counter - 10) + 'A');
             } else {
                 switch (counter) {
                     case 36: check_digit = '-';
@@ -289,10 +290,11 @@ int c39(struct zint_symbol *symbol, unsigned char source[], const size_t length)
 }
 
 /* Pharmazentral Nummer (PZN) */
-int pharmazentral(struct zint_symbol *symbol, unsigned char source[], int length) {
+int pharmazentral(struct zint_symbol *symbol, unsigned char source[], size_t length) {
 
-    int i, error_number, zeroes;
-    unsigned int count, check_digit;
+    int error_number;
+    size_t i,  zeroes;
+    size_t count, check_digit;
     char localstr[11];
 
     count = 0;
@@ -313,14 +315,14 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[], int length
     strcpy(localstr + zeroes, (char *) source);
 
     for (i = 1; i < 8; i++) {
-        count += i * ctoi(localstr[i]);
+        count += i * (unsigned) ctoi(localstr[i]);
     }
 
     check_digit = count % 11;
     if (check_digit == 11) {
         check_digit = 0;
     }
-    localstr[8] = itoc(check_digit);
+    localstr[8] = itoc((int)check_digit);
     localstr[9] = '\0';
     if (localstr[8] == 'A') {
         strcpy(symbol->errtxt, "327: Invalid PZN Data");
@@ -333,7 +335,7 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[], int length
 }
 
 /* Extended Code 39 - ISO/IEC 16388:2007 Annex A */
-int ec39(struct zint_symbol *symbol, unsigned char source[], int length) {
+int ec39(struct zint_symbol *symbol, unsigned char source[], size_t length) {
 
     unsigned char buffer[150] = {0};
     unsigned int i;
@@ -365,14 +367,13 @@ int ec39(struct zint_symbol *symbol, unsigned char source[], int length) {
 }
 
 /* Code 93 is an advancement on Code 39 and the definition is a lot tighter */
-int c93(struct zint_symbol *symbol, unsigned char source[], int length) {
+int c93(struct zint_symbol *symbol, unsigned char source[], size_t length) {
 
     /* SILVER includes the extra characters a, b, c and d to represent Code 93 specific
        shift characters 1, 2, 3 and 4 respectively. These characters are never used by
        c39() and ec39() */
 
-    int i;
-    int h, weight, c, k, values[128], error_number;
+    int i,h, weight, c, k, values[128], error_number;
     char buffer[220];
     char dest[670];
     char set_copy[] = SILVER;
@@ -386,7 +387,7 @@ int c93(struct zint_symbol *symbol, unsigned char source[], int length) {
     }
 
     /* Message Content */
-    for (i = 0; i < length; i++) {
+    for (i = 0; i < (int)length; i++) {
         if (source[i] > 127) {
             /* Cannot encode extended ASCII */
             strcpy(symbol->errtxt, "331: Invalid characters in input data");
@@ -446,8 +447,8 @@ int c93(struct zint_symbol *symbol, unsigned char source[], int length) {
     strcat(dest, "1111411");
     expand(symbol, dest);
 
-    symbol->text[length] = set_copy[c];
-    symbol->text[length + 1] = set_copy[k];
+    symbol->text[length]     = (unsigned char)set_copy[c];
+    symbol->text[length + 1] = (unsigned char)set_copy[k];
     symbol->text[length + 2] = '\0';
 
     return error_number;
@@ -506,8 +507,9 @@ void NextS(int Chan, int i, int MaxS, int MaxB) {
 }
 
 /* Channel Code - According to ANSI/AIM BC12-1998 */
-int channel_code(struct zint_symbol *symbol, unsigned char source[], int length) {
-    int channels, i;
+int channel_code(struct zint_symbol *symbol, unsigned char source[], size_t length) {
+    int channels;
+    size_t i;
     int error_number = 0, range = 0, zeroes;
     char hrt[9];
 
@@ -529,7 +531,7 @@ int channel_code(struct zint_symbol *symbol, unsigned char source[], int length)
         channels = symbol->option_2;
     }
     if (channels == 0) {
-        channels = length + 1;
+        channels = (int)(length + 1);
     }
     if (channels == 2) {
         channels = 3;
@@ -580,8 +582,8 @@ int channel_code(struct zint_symbol *symbol, unsigned char source[], int length)
     value = 0;
     NextS(channels, 3, channels, channels);
 
-    zeroes = channels - 1 - length;
-    memset(hrt, '0', zeroes);
+    zeroes = channels - 1 - (int)length;
+    memset(hrt, '0', (size_t)zeroes);
     strcpy(hrt + zeroes, (char *) source);
     ustrcpy(symbol->text, (unsigned char *) hrt);
 

@@ -121,7 +121,7 @@ static void CreateCharacterSetTable(CharacterSetTable T[], unsigned char *data,c
     int runChar;
 
     /* Treat the Data backwards */
-    charCur=dataLength-1;
+    charCur=(int)dataLength-1;
     T[charCur].CharacterSet=GetPossibleCharacterSet(data[charCur]);
     T[charCur].AFollowing=((T[charCur].CharacterSet & CodeA)==0)?0:1;
     T[charCur].BFollowing=((T[charCur].CharacterSet & CodeB)==0)?0:1;
@@ -462,7 +462,7 @@ static int Rows2Columns(CharacterSetTable *T, unsigned char *data, const size_t 
         testColumns=32767;
     else {
         /* First guess */
-        testColumns=dataLength/rowsRequested;
+        testColumns=(int)(dataLength/rowsRequested);
         if (testColumns > 62)
             testColumns = 62;
         else if (testColumns < 1)
@@ -629,7 +629,7 @@ void SumASCII(uchar **ppOutPos, int Sum, int CharacterSet)
 
 /* Main function called by zint framework
  */
-int codablock(struct zint_symbol *symbol,const unsigned char source[], const size_t length) {
+int codablock(struct zint_symbol *symbol,const unsigned char source[], size_t length) {
     size_t charCur,dataLength;
     int Error;
     int rows, columns, useColumns;
@@ -711,7 +711,7 @@ int codablock(struct zint_symbol *symbol,const unsigned char source[], const siz
             if (columns > 64)
                 columns = 64;
                 #ifdef _DEBUG
-                printf("Auto column count for %d characters:%d\n",dataLength,columns);
+                printf("Auto column count for %d characters:%d\n",(int)dataLength,columns);
                 #endif
         }
     }

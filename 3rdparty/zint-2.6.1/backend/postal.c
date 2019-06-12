@@ -85,7 +85,7 @@ static const char *JapanTable[19] = {
 };
 
 /* Handles the PostNet system used for Zip codes in the US */
-int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[], int length) {
+int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[], size_t length) {
     unsigned int i, sum, check_digit;
     int error_number;
 
@@ -120,9 +120,9 @@ int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[], int
 }
 
 /* Puts PostNet barcodes into the pattern matrix */
-int post_plot(struct zint_symbol *symbol, unsigned char source[], int length) {
+int post_plot(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     char height_pattern[256]; /* 5 + 38 * 5 + 5 + 5 +  1 ~ 256 */
-    unsigned int loopey, h;
+    size_t loopey, h;
     int writer;
     int error_number;
 
@@ -151,8 +151,9 @@ int post_plot(struct zint_symbol *symbol, unsigned char source[], int length) {
 }
 
 /* Handles the PLANET  system used for item tracking in the US */
-int planet(struct zint_symbol *symbol, unsigned char source[], char dest[], int length) {
-    unsigned int i, sum, check_digit;
+int planet(struct zint_symbol *symbol, unsigned char source[], char dest[], size_t length) {
+    unsigned int sum, check_digit;
+    size_t i;
     int error_number;
 
     error_number = 0;
@@ -186,9 +187,9 @@ int planet(struct zint_symbol *symbol, unsigned char source[], char dest[], int 
 }
 
 /* Puts PLANET barcodes into the pattern matrix */
-int planet_plot(struct zint_symbol *symbol, unsigned char source[], int length) {
+int planet_plot(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     char height_pattern[256]; /* 5 + 38 * 5 + 5 + 5 +  1 ~ 256 */
-    unsigned int loopey, h;
+    size_t loopey, h;
     int writer;
     int error_number;
 
@@ -216,8 +217,9 @@ int planet_plot(struct zint_symbol *symbol, unsigned char source[], int length) 
 }
 
 /* Korean Postal Authority */
-int korea_post(struct zint_symbol *symbol, unsigned char source[], int length) {
-    int total, loop, check, zeroes, error_number;
+int korea_post(struct zint_symbol *symbol, unsigned char source[], size_t length) {
+    int total, loop, check, error_number;
+    size_t zeroes;
     char localstr[8], dest[80];
 
     error_number = 0;
@@ -256,7 +258,7 @@ int korea_post(struct zint_symbol *symbol, unsigned char source[], int length) {
 
 /* The simplest barcode symbology ever! Supported by MS Word, so here it is!
     glyphs from http://en.wikipedia.org/wiki/Facing_Identification_Mark */
-int fim(struct zint_symbol *symbol, unsigned char source[], int length) {
+int fim(struct zint_symbol *symbol, unsigned char source[], size_t length) {
 
 
     char dest[16] = {0};
@@ -294,8 +296,8 @@ int fim(struct zint_symbol *symbol, unsigned char source[], int length) {
 }
 
 /* Handles the 4 State barcodes used in the UK by Royal Mail */
-char rm4scc(char source[], unsigned char dest[], int length) {
-    unsigned int i;
+char rm4scc(char source[], unsigned char dest[], size_t length) {
+    size_t i;
     int top, bottom, row, column, check_digit;
     char values[3], set_copy[] = KRSET;
 
@@ -331,9 +333,9 @@ char rm4scc(char source[], unsigned char dest[], int length) {
 }
 
 /* Puts RM4SCC into the data matrix */
-int royal_plot(struct zint_symbol *symbol, unsigned char source[], int length) {
+int royal_plot(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     char height_pattern[210];
-    unsigned int loopey, h;
+    size_t loopey, h;
     int writer;
     int error_number;
     strcpy(height_pattern, "");
@@ -377,10 +379,10 @@ int royal_plot(struct zint_symbol *symbol, unsigned char source[], int length) {
 /* Handles Dutch Post TNT KIX symbols
    The same as RM4SCC but without check digit
    Specification at http://www.tntpost.nl/zakelijk/klantenservice/downloads/kIX_code/download.aspx */
-int kix_code(struct zint_symbol *symbol, unsigned char source[], int length) {
+int kix_code(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     char height_pattern[75], localstr[20];
-    unsigned int loopey;
-    int writer, i, h;
+    size_t loopey,h,i;
+    int writer;
     int error_number; /* zeroes; */
     strcpy(height_pattern, "");
 
@@ -427,10 +429,10 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[], int length) {
 }
 
 /* Handles DAFT Code symbols */
-int daft_code(struct zint_symbol *symbol, unsigned char source[], int length) {
+int daft_code(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     char height_pattern[100];
-    unsigned int loopey, h;
-    int writer, i, error_number;
+   size_t loopey, h, i;
+    int writer, error_number;
     strcpy(height_pattern, "");
 
     error_number = 0;
@@ -484,8 +486,9 @@ int daft_code(struct zint_symbol *symbol, unsigned char source[], int length) {
 }
 
 /* Flattermarken - Not really a barcode symbology! */
-int flattermarken(struct zint_symbol *symbol, unsigned char source[], int length) {
-    int loop, error_number;
+int flattermarken(struct zint_symbol *symbol, unsigned char source[], size_t length) {
+    int error_number;
+    size_t loop;
     char dest[512]; /* 90 * 4 + 1 ~ */
 
     error_number = 0;
@@ -509,11 +512,12 @@ int flattermarken(struct zint_symbol *symbol, unsigned char source[], int length
 }
 
 /* Japanese Postal Code (Kasutama Barcode) */
-int japan_post(struct zint_symbol *symbol, unsigned char source[], int length) {
-    int error_number, h;
+int japan_post(struct zint_symbol *symbol, unsigned char source[], size_t length) {
+    int error_number;
     char pattern[69];
-    int writer, loopey, inter_posn, i, sum, check;
-    char check_char;
+    int writer, inter_posn,  sum, check;
+    size_t i, h,loopey;
+    char check_char=0;
     char inter[23];
 
 #ifndef _MSC_VER

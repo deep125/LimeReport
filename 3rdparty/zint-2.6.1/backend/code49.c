@@ -40,7 +40,7 @@
 
 /* "!" represents Shift 1 and "&" represents Shift 2, "*" represents FNC1 */
 
-int code_49(struct zint_symbol *symbol, unsigned char source[], const int length) {
+int code_49(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     int i, j, rows, M, x_count, y_count, z_count, posn_val, local_value;
     char intermediate[170] = "";
     int codewords[170], codeword_count;
@@ -334,7 +334,7 @@ int code_49(struct zint_symbol *symbol, unsigned char source[], const int length
     }
 
     symbol->rows = rows;
-    symbol->width = strlen(pattern);
+    symbol->width = (int)strlen(pattern);
     symbol->whitespace_width = 10;
     if (!(symbol->output_options & BARCODE_BIND)) {
         symbol->output_options += BARCODE_BIND;

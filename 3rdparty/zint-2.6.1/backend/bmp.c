@@ -57,11 +57,11 @@ int bmp_pixel_plot(struct zint_symbol *symbol, char *pixelbuf) {
     if (symbol->bitmap != NULL)
         free(symbol->bitmap);
 
-    row_size = 4 * floor((24.0 * symbol->bitmap_width + 31) / 32);
-    bitmap = (char *) malloc(row_size * symbol->bitmap_height);
+	row_size = 4 * (int)(floor((24.0 * symbol->bitmap_width + 31) / 32));
+	bitmap = (char *) malloc((size_t)(row_size * symbol->bitmap_height));
 
     fgred = (16 * ctoi(symbol->fgcolour[0])) + ctoi(symbol->fgcolour[1]);
-    fggrn = (16 * ctoi(symbol->fgcolour[2])) + ctoi(symbol->fgcolour[3]);
+	fggrn = (16 * ctoi(symbol->fgcolour[2])) + ctoi(symbol->fgcolour[3]);
     fgblu = (16 * ctoi(symbol->fgcolour[4])) + ctoi(symbol->fgcolour[5]);
     bgred = (16 * ctoi(symbol->bgcolour[0])) + ctoi(symbol->bgcolour[1]);
     bggrn = (16 * ctoi(symbol->bgcolour[2])) + ctoi(symbol->bgcolour[3]);

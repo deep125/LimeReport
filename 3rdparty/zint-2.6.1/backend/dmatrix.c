@@ -1302,7 +1302,7 @@ int data_matrix_200(struct zint_symbol *symbol,const unsigned char source[], con
     return error_number;
 }
 
-int dmatrix(struct zint_symbol *symbol, const unsigned char source[], const size_t in_length) {
+int dmatrix(struct zint_symbol *symbol, const unsigned char source[], size_t in_length) {
     int error_number;
 
     if (symbol->option_1 <= 1) {

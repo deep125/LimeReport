@@ -64,7 +64,7 @@ static const char *AusBarTable[64] = {
 #endif
 
 static inline char convert_pattern(char data, int shift) {
-    return (data - '0') << shift;
+    return (char)((data - '0') << shift);
 }
 
 /* Adds Reed-Solomon error correction to auspost */
@@ -94,7 +94,7 @@ void rs_error(char data_pattern[]) {
 }
 
 /* Handles Australia Posts's 4 State Codes */
-int australia_post(struct zint_symbol *symbol, unsigned char source[], int length) {
+int australia_post(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     /* Customer Standard Barcode, Barcode 2 or Barcode 3 system determined automatically
        (i.e. the FCC doesn't need to be specified by the user) dependent
        on the length of the input string */
@@ -104,7 +104,8 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
        1 = Tracker and Ascender
        2 = Tracker and Descender
        3 = Tracker only */
-    int error_number, zeroes;
+    int error_number;
+    size_t zeroes;
     int writer;
     unsigned int loopey, reader;
     size_t h;

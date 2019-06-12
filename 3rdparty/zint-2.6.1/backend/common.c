@@ -48,8 +48,8 @@ int ctoi(const char source) {
 
 
 /* Convert an integer value to a string representing its binary equivalent */
-void bin_append(const int arg, const int length, char *binary) {
-    int i;
+void bin_append(size_t arg, size_t length, char *binary) {
+    size_t i;
     int start;
     size_t posn = strlen(binary);
     
@@ -67,7 +67,7 @@ void bin_append(const int arg, const int length, char *binary) {
 }
 
 /* Converts an integer value to its hexadecimal character */
-char itoc(const int source) {
+char itoc(int source) {
     if ((source >= 0) && (source <= 9)) {
         return ('0' + source);
     } else {
@@ -241,7 +241,7 @@ int istwodigits(const unsigned char source[], const size_t position) {
 int utf8toutf16(struct zint_symbol *symbol, const unsigned char source[], int vals[], size_t *length) {
     size_t bpos;
     int    jpos, error_number;
-    int next;
+    size_t next;
 
     bpos = 0;
     jpos = 0;

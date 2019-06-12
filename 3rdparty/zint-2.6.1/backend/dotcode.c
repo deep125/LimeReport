@@ -293,7 +293,7 @@ void rsencode(int nd, int nc, unsigned char *wd) {
 }
 
 /* Check if the next character is directly encodable in code set A (Annex F.II.D) */
-int datum_a(const unsigned char source[], int position, int length) {
+int datum_a(const unsigned char source[], size_t position, size_t length) {
     int retval = 0;
 
     if (position < length) {
@@ -306,7 +306,7 @@ int datum_a(const unsigned char source[], int position, int length) {
 }
 
 /* Check if the next character is directly encodable in code set B (Annex F.II.D) */
-int datum_b(const unsigned char source[], int position, int length) {
+int datum_b(const unsigned char source[], size_t position, size_t length) {
     int retval = 0;
 
     if (position < length) {
@@ -333,10 +333,10 @@ int datum_b(const unsigned char source[], int position, int length) {
 }
 
 /* Check if the next characters are directly encodable in code set C (Annex F.II.D) */
-int datum_c(const unsigned char source[], int position, int length) {
+int datum_c(const unsigned char source[], size_t position, size_t length) {
     int retval = 0;
 
-    if (position <= length - 2) {
+    if (position + 2 <= length ) {
         if (((source[position] >= '0') && (source[position] <= '9'))
                 && ((source[position + 1] >= '0') && (source[position + 1] <= '9')))
             retval = 1;
@@ -346,16 +346,16 @@ int datum_c(const unsigned char source[], int position, int length) {
 }
 
 /* Returns how many consecutive digits lie immediately ahead (Annex F.II.A) */
-int n_digits(const unsigned char source[], int position, int length) {
-    int i;
+int n_digits(const unsigned char source[], size_t position, size_t length) {
+    size_t i;
 
-    for (i = position; ((source[i] >= '0') && (source[i] <= '9')) && (i < length); i++);
+    for (i = position; ((source[i] >= '0') && (source[i] <= '9')) && (i < (int)length); i++);
 
-    return i - position;
+    return (int)(i - position);
 }
 
 /* checks ahead for 10 or more digits starting "17xxxxxx10..." (Annex F.II.B) */
-int seventeen_ten(const unsigned char source[], int position, int length) {
+int seventeen_ten(const unsigned char source[], int position, size_t length) {
     int found = 0;
 
     if (n_digits(source, position, length) >= 10) {
@@ -371,9 +371,9 @@ int seventeen_ten(const unsigned char source[], int position, int length) {
 /*  checks how many characters ahead can be reached while datum_c is true,
  *  returning the resulting number of codewords (Annex F.II.E)
  */
-int ahead_c(const unsigned char source[], int position, int length) {
+int ahead_c(const unsigned char source[], size_t position, size_t length) {
     int count = 0;
-    int i;
+    size_t i;
 
     for (i = position; (i < length) && datum_c(source, i, length); i += 2) {
         count++;
@@ -383,7 +383,7 @@ int ahead_c(const unsigned char source[], int position, int length) {
 }
 
 /* Annex F.II.F */
-int try_c(const unsigned char source[], int position, int length) {
+int try_c(const unsigned char source[], size_t position, size_t length) {
     int retval = 0;
 
     if (n_digits(source, position, length) > 0) {
@@ -396,9 +396,9 @@ int try_c(const unsigned char source[], int position, int length) {
 }
 
 /* Annex F.II.G */
-int ahead_a(const unsigned char source[], int position, int length) {
+int ahead_a(const unsigned char source[], size_t position, size_t length) {
     int count = 0;
-    int i;
+    size_t i;
 
     for (i = position; ((i < length) && datum_a(source, i, length))
             && (try_c(source, i, length) < 2); i++) {
@@ -409,9 +409,9 @@ int ahead_a(const unsigned char source[], int position, int length) {
 }
 
 /* Annex F.II.H */
-int ahead_b(const unsigned char source[], int position, int length) {
+int ahead_b(const unsigned char source[], size_t position, size_t length) {
     int count = 0;
-    int i;
+    size_t i;
 
     for (i = position; ((i < length) && datum_b(source, i, length))
             && (try_c(source, i, length) < 2); i++) {
@@ -433,7 +433,7 @@ int binary(const unsigned char source[], int position) {
 }
 
 /* Analyse input data stream and encode using algorithm from Annex F */
-int dotcode_encode_message(struct zint_symbol *symbol, const unsigned char source[], int length, unsigned char *codeword_array, int *binary_finish) {
+int dotcode_encode_message(struct zint_symbol *symbol, const unsigned char source[], size_t length, unsigned char *codeword_array, int *binary_finish) {
     int input_position, array_length, i;
     char encoding_mode;
     int inside_macro, done;
@@ -1190,7 +1190,7 @@ void fold_dotstream(char dot_stream[], int width, int height, char dot_array[]) 
     }
 }
 
-int dotcode(struct zint_symbol *symbol, const unsigned char source[], int length) {
+int dotcode(struct zint_symbol *symbol, const unsigned char source[], size_t length) {
     int i, j, k;
     size_t jc, n_dots;
     int data_length, ecc_length;
@@ -1300,7 +1300,7 @@ int dotcode(struct zint_symbol *symbol, const unsigned char source[], int length
 #endif
 
     /* Add pad characters */
-    padding_dots = n_dots - min_dots; /* get the number of free dots available for padding */
+    padding_dots = (int)n_dots - min_dots; /* get the number of free dots available for padding */
     is_first = 1; /* first padding character flag */
 
     while (padding_dots >= 9) {

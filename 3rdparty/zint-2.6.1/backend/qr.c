@@ -42,7 +42,7 @@
 #include <stdlib.h>     /* abs */
 #include <assert.h>
 
-extern int utf_to_eci(const int eci, const unsigned char source[], unsigned char dest[], size_t *length); /* Convert Unicode to other encodings */
+extern int utf_to_eci(unsigned eci, const unsigned char source[], unsigned char dest[], size_t *length); /* Convert Unicode to other encodings */
 
 /* Returns true if input glyph is in the Alphanumeric set */
 static int in_alpha(const int glyph) {
@@ -1338,11 +1338,11 @@ static int getBinaryLength(const int version,char inputMode[],const int inputDat
             switch (inputMode[i]) {
                 case 'K':
                     count += tribus(version, 8, 10, 12);
-                    count += (blockLength(i, inputMode, inputLength) * 13);
+                    count += (int)(blockLength(i, inputMode, inputLength) * 13);
                     break;
                 case 'B':
                     count += tribus(version, 8, 16, 16);
-                    for (j = i; j < (i + blockLength(i, inputMode, inputLength)); j++) {
+                    for (j = (int)i; j < (int)(i + blockLength(i, inputMode, inputLength)); j++) {
                         if (inputData[j] > 0xff) {
                             count += 16;
                         } else {
@@ -1354,10 +1354,10 @@ static int getBinaryLength(const int version,char inputMode[],const int inputDat
                     count += tribus(version, 9, 11, 13);
                     switch (blockLength(i, inputMode, inputLength) % 2) {
                         case 0:
-                            count += (blockLength(i, inputMode, inputLength) / 2) * 11;
+                            count += (int)(blockLength(i, inputMode, inputLength) / 2) * 11;
                             break;
                         case 1:
-                            count += ((blockLength(i, inputMode, inputLength) - 1) / 2) * 11;
+                            count += (int)((blockLength(i, inputMode, inputLength) - 1) / 2) * 11;
                             count += 6;
                             break;
                     }
@@ -1366,14 +1366,14 @@ static int getBinaryLength(const int version,char inputMode[],const int inputDat
                     count += tribus(version, 10, 12, 14);
                     switch (blockLength(i, inputMode, inputLength) % 3) {
                         case 0:
-                            count += (blockLength(i, inputMode, inputLength) / 3) * 10;
+                            count += (int)(blockLength(i, inputMode, inputLength) / 3) * 10;
                             break;
                         case 1:
-                            count += ((blockLength(i, inputMode, inputLength) - 1) / 3) * 10;
+                            count += (int)((blockLength(i, inputMode, inputLength) - 1) / 3) * 10;
                             count += 4;
                             break;
                         case 2:
-                            count += ((blockLength(i, inputMode, inputLength) - 2) / 3) * 10;
+                            count += (int)((blockLength(i, inputMode, inputLength) - 2) / 3) * 10;
                             count += 7;
                             break;
                     }
@@ -2859,10 +2859,10 @@ int microqr(struct zint_symbol *symbol, const unsigned char source[], size_t len
     symbol->width = size;
     symbol->rows = size;
 
-    for (i = 0; i < size; i++) {
+    for (i = 0; i < (size_t)size; i++) {
         for (j = 0; j < size; j++) {
             if (grid[(i * size) + j] & 0x01) {
-                set_module(symbol, i, j);
+                set_module(symbol, (int)i, j);
             }
         }
         symbol->row_height[i] = 1;

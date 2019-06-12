@@ -1360,7 +1360,7 @@ int han_xin(struct zint_symbol *symbol, const unsigned char source[], size_t len
     }
 
     calculate_binary(binary, mode, gbdata, length, symbol->eci, symbol->debug);
-    bin_len = strlen(binary);
+    bin_len = (int)strlen(binary);
     codewords = bin_len / 8;
     if (bin_len % 8 != 0) {
         codewords++;

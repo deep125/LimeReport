@@ -102,7 +102,7 @@ char upc_check(char source[]) {
 
 /* UPC A is usually used for 12 digit numbers, but this function takes a source of any length */
 void upca_draw(char source[], char dest[]) {
-    unsigned int i, half_way;
+    size_t i, half_way;
 
     half_way = strlen(source) / 2;
 
@@ -125,7 +125,7 @@ void upca_draw(char source[], char dest[]) {
 
 /* Make a UPC A barcode when we haven't been given the check digit */
 int upca(struct zint_symbol *symbol, unsigned char source[], char dest[]) {
-    int length;
+    size_t length;
     char gtin[15];
 
     strcpy(gtin, (char*) source);
@@ -364,12 +364,12 @@ void add_on(unsigned char source[], char dest[], int mode) {
 /* Calculate the correct check digit for a EAN-13 barcode */
 char ean_check(char source[]) {
     int i;
-    unsigned int h, count, check_digit;
+    size_t h, count, check_digit;
 
     count = 0;
 
     h = strlen(source);
-    for (i = h - 1; i >= 0; i--) {
+    for (i = (int)(h - 1); i >= 0; i--) {
         count += ctoi(source[i]);
 
         if (i & 1) {
@@ -380,11 +380,11 @@ char ean_check(char source[]) {
     if (check_digit == 10) {
         check_digit = 0;
     }
-    return itoc(check_digit);
+    return itoc((int)check_digit);
 }
 
 int ean13(struct zint_symbol *symbol, unsigned char source[], char dest[]) {
-    unsigned int length, i, half_way;
+    size_t length, i, half_way;
     char parity[6];
     char gtin[15];
 
@@ -439,7 +439,7 @@ int ean13(struct zint_symbol *symbol, unsigned char source[], char dest[]) {
 /* Make an EAN-8 barcode when we haven't been given the check digit */
 int ean8(struct zint_symbol *symbol, unsigned char source[], char dest[]) {
     /* EAN-8 is basically the same as UPC-A but with fewer digits */
-    int length;
+    size_t length;
     char gtin[10];
 
     strcpy(gtin, (char*) source);
@@ -464,7 +464,7 @@ int ean8(struct zint_symbol *symbol, unsigned char source[], char dest[]) {
 
 /* For ISBN(13) only */
 char isbn13_check(unsigned char source[]) {
-    unsigned int i, weight, sum, check, h;
+    size_t i, weight, sum, check, h;
 
     sum = 0;
     weight = 1;
@@ -479,12 +479,12 @@ char isbn13_check(unsigned char source[]) {
     check = sum % 10;
     check = 10 - check;
     if (check == 10) check = 0;
-    return itoc(check);
+    return itoc((int)check);
 }
 
 /* For ISBN(10) and SBN only */
 char isbn_check(unsigned char source[]) {
-    unsigned int i, weight, sum, check, h;
+    size_t i, weight, sum, check, h;
     char check_char;
 
     sum = 0;
@@ -497,7 +497,7 @@ char isbn_check(unsigned char source[]) {
     }
 
     check = sum % 11;
-    check_char = itoc(check);
+    check_char = itoc((int)check);
     if (check == 10) {
         check_char = 'X';
     }
@@ -589,7 +589,7 @@ static int isbn(struct zint_symbol *symbol, unsigned char source[], const size_t
 void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsigned char local_source[]) {
     unsigned char first_part[20], second_part[20], zfirst_part[20], zsecond_part[20];
     int with_addon = 0;
-    int first_len = 0, second_len = 0, zfirst_len = 0, zsecond_len = 0, i, h;
+    size_t first_len = 0, second_len = 0, zfirst_len = 0, zsecond_len = 0, i, h;
 
     h = ustrlen(source);
     for (i = 0; i < h; i++) {
@@ -715,7 +715,7 @@ void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsi
 }
 
 /* splits string to parts before and after '+' parts */
-int eanx(struct zint_symbol *symbol, unsigned char source[], int src_len) {
+int eanx(struct zint_symbol *symbol, unsigned char source[], size_t src_len) {
     unsigned char first_part[20] = {0}, second_part[20] = {0}, dest[1000] = {0};
     unsigned char local_source[20] = {0};
     unsigned int latch, reader, writer, with_addon;

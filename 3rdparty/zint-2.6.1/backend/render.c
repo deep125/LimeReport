@@ -45,7 +45,7 @@
 #endif
 #include "common.h"
 
-#define   GL_CONST  2.8346
+#define   GL_CONST  2.8346f
 
 struct zint_render_line *render_plot_create_line(float x, float y, float width, float length);
 int render_plot_add_line(struct zint_symbol *symbol, struct zint_render_line *line, struct zint_render_line **last_line);
@@ -119,10 +119,10 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
 
     if ((!symbol->show_hrt) || (ustrlen(symbol->text) == 0)) {
         hide_text = 1;
-        text_height = text_offset = 0.0;
+        text_height = text_offset = 0;
     } else {
-        text_height = 9.0;
-        text_offset = 2.0;
+        text_height = 9;
+        text_offset = 2;
     }
 
 
@@ -208,7 +208,7 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
         }
     }
 
-    total_symbol_width_x = 0.0 + main_symbol_width_x + addon_width_x;
+    total_symbol_width_x = 0 + main_symbol_width_x + addon_width_x;
     total_area_width_x = total_symbol_width_x + (2 * (symbol->border_width + symbol->whitespace_width));
 
     xoffset = symbol->border_width + symbol->whitespace_width;
@@ -259,26 +259,26 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
 
     /* Set minimum size of symbol */
     /* Barcode must be at least 2mm high by 2mm across */
-    if (render->height < ((x_dimension * ((2 * symbol->border_width) + text_offset + text_height)) + 2.0) * GL_CONST) {
-        render->height = ((x_dimension * ((2 * symbol->border_width) + text_offset + text_height)) + 2.0) * GL_CONST;
+    if (render->height < ((x_dimension * ((2 * symbol->border_width) + text_offset + text_height)) + 2.0f) * GL_CONST) {
+        render->height = ((x_dimension * ((2 * symbol->border_width) + text_offset + text_height)) + 2.0f) * GL_CONST;
     }
-    if (render->width < (2.0 * GL_CONST)) {
-        render->width = (2.0 * GL_CONST);
+    if (render->width < (2.0f * GL_CONST)) {
+        render->width = (2.0f * GL_CONST);
     }
 
     if (symbol->symbology == BARCODE_CODABAR) {
         /* The minimum X-dimension of Codabar is 0.191mm. The minimum bar height is 5mm */
-        if (x_dimension < 0.191) {
-            render->width = 0.191 * GL_CONST * total_area_width_x;
+        if (x_dimension < 0.191f) {
+            render->width = 0.191f * GL_CONST * total_area_width_x;
         }
-        if (render->height < ((x_dimension * ((2 * symbol->border_width) + text_offset + text_height)) + 5.0) * GL_CONST) {
-            render->height = ((x_dimension * ((2 * symbol->border_width) + text_offset + text_height)) + 5.0) * GL_CONST;
+        if (render->height < ((x_dimension * ((2 * symbol->border_width) + text_offset + text_height)) + 5.0f) * GL_CONST) {
+            render->height = ((x_dimension * ((2 * symbol->border_width) + text_offset + text_height)) + 5.0f) * GL_CONST;
         }
     }
     else if (symbol->symbology == BARCODE_CODE49) {
         /* The minimum X-dimension of Code 49 is 0.191mm */
-        if (x_dimension < 0.191) {
-            render->width = 0.191 * GL_CONST * total_area_width_x;
+        if (x_dimension < 0.191f) {
+            render->width = 0.191f * GL_CONST * total_area_width_x;
             render->height = render->width / symbol_aspect;
         }
     }
@@ -286,7 +286,7 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
     if (upceanflag != 0) {
         /* The X-dimension of UPC/EAN symbols is fixed at 0.330mm */
         /* NOTE: This code will need adjustment before it correctly deals with composite symbols */
-        render->width = 0.330 * GL_CONST * total_area_width_x;
+        render->width = 0.330f * GL_CONST * total_area_width_x;
         /* The height is also fixed */
         switch (upceanflag) {
             case 6:
@@ -294,61 +294,61 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
             case 13:
                 /* UPC-A, UPC-E and EAN-13 */
                 /* Height of bars should be 22.85mm */
-                render->height = ((0.330 * ((2 * symbol->border_width) + text_offset + text_height)) + 22.85) * GL_CONST;
+                render->height = ((0.330f * ((2 * symbol->border_width) + text_offset + text_height)) + 22.85f) * GL_CONST;
                 break;
             case 8:
                 /* EAN-8 */
                 /* Height of bars should be 18.23mm */
-                render->height = ((0.330 * ((2 * symbol->border_width) + text_offset + text_height)) + 18.23) * GL_CONST;
+                render->height = ((0.330f * ((2 * symbol->border_width) + text_offset + text_height)) + 18.23f) * GL_CONST;
                 break;
             default:
                 /* EAN-2 and EAN-5 */
                 /* Height of bars should be 21.10mm */
-                render->height = ((0.330 * ((2 * symbol->border_width) + text_offset + text_height)) + 21.10) * GL_CONST;
+                render->height = ((0.330f * ((2 * symbol->border_width) + text_offset + text_height)) + 21.10f) * GL_CONST;
         }
     }
 
     if (symbol->symbology == BARCODE_ONECODE) {
         /* The size of USPS Intelligent Mail barcode is fixed */
-        render->width = 0.508 * GL_CONST * total_area_width_x;
-        render->height = 4.064 * GL_CONST;
+        render->width = 0.508f * GL_CONST * total_area_width_x;
+        render->height = 4.064f * GL_CONST;
     }
     else if ((symbol->symbology == BARCODE_POSTNET) || (symbol->symbology == BARCODE_PLANET)) {
         /* The size of PostNet and PLANET are fized */
-        render->width = 0.508 * GL_CONST * total_area_width_x;
-        render->height = 2.921 * GL_CONST;
+        render->width = 0.508f * GL_CONST * total_area_width_x;
+        render->height = 2.921f * GL_CONST;
     }
     else if (((symbol->symbology == BARCODE_AUSPOST) || (symbol->symbology == BARCODE_AUSREPLY)) ||
             ((symbol->symbology == BARCODE_AUSROUTE) || (symbol->symbology == BARCODE_AUSREDIRECT))) {
         /* Australia Post use the same sizes as USPS */
-        render->width = 0.508 * GL_CONST * total_area_width_x;
-        render->height = 4.064 * GL_CONST;
+        render->width = 0.508f * GL_CONST * total_area_width_x;
+        render->height = 4.064f * GL_CONST;
     }
     else if ((symbol->symbology == BARCODE_RM4SCC) || (symbol->symbology == BARCODE_KIX)) {
         /* Royal Mail and KIX Code uses 22 bars per inch */
-        render->width = 0.577 * GL_CONST * total_area_width_x;
-        render->height = 5.22 * GL_CONST;
+        render->width = 0.577f * GL_CONST * total_area_width_x;
+        render->height = 5.22f * GL_CONST;
     }
 
     if (symbol->symbology == BARCODE_MAXICODE) {
         /* Maxicode is a fixed size */
         scaler = GL_CONST; /* Converts from millimeters to the scale used by glabels */
-        render->width = 28.16 * scaler;
-        render->height = 26.86 * scaler;
+        render->width = 28.16f * scaler;
+        render->height = 26.86f * scaler;
 
         /* Central bullseye pattern */
-        ring = render_plot_create_ring(13.64 * scaler, 13.43 * scaler, 0.85 * scaler, 0.67 * scaler);
+        ring = render_plot_create_ring(13.64f * scaler, 13.43f * scaler, 0.85f * scaler, 0.67f * scaler);
         render_plot_add_ring(symbol, ring, &last_ring);
-        ring = render_plot_create_ring(13.64 * scaler, 13.43 * scaler, 2.20 * scaler, 0.67 * scaler);
+        ring = render_plot_create_ring(13.64f * scaler, 13.43f * scaler, 2.20f * scaler, 0.67f * scaler);
         render_plot_add_ring(symbol, ring, &last_ring);
-        ring = render_plot_create_ring(13.64 * scaler, 13.43 * scaler, 3.54 * scaler, 0.67 * scaler);
+        ring = render_plot_create_ring(13.64f * scaler, 13.43f * scaler, 3.54f * scaler, 0.67f * scaler);
         render_plot_add_ring(symbol, ring, &last_ring);
 
         /* Hexagons */
         for (r = 0; r < symbol->rows; r++) {
             for (i = 0; i < symbol->width; i++) {
                 if (module_is_set(symbol, r, i)) {
-                    hexagon = render_plot_create_hexagon(((i * 0.88) + (r & 1 ? 1.76 : 1.32)) * scaler, ((r * 0.76) + 0.76) * scaler);
+                    hexagon = render_plot_create_hexagon(((i * 0.88f) + (r & 1 ? 1.76f : 1.32f)) * scaler, ((r * 0.76f) + 0.76f) * scaler);
                     render_plot_add_hexagon(symbol, hexagon, &last_hexagon);
                 }
             }
@@ -364,7 +364,7 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
             if (symbol->row_height[this_row] == 0) {
                 row_height = large_bar_height;
             } else {
-                row_height = symbol->row_height[this_row];
+                row_height = (float)symbol->row_height[this_row];
             }
             row_posn = 0;
             for (i = 0; i < r; i++) {
@@ -397,7 +397,7 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
                     if (addon_latch == 0) {
                         line = render_plot_create_line((i + xoffset) * scaler, (row_posn) * scaler, block_width * scaler, row_height * scaler);
                     } else {
-                        line = render_plot_create_line((i + xoffset) * scaler, (row_posn + 10.0) * scaler, block_width * scaler, (row_height - 5.0) * scaler);
+                        line = render_plot_create_line((i + xoffset) * scaler, (row_posn + 10.0f) * scaler, block_width * scaler, (row_height - 5.0f) * scaler);
                     }
                     latch = 0;
 
@@ -430,7 +430,7 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
                     case 11:
                     case 20:
                     case 21:
-                        line->length += (5.0 * scaler);
+                        line->length += (5.0f * scaler);
                         break;
                 }
                 i++;
@@ -441,25 +441,25 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
             }
             textpart[4] = '\0';
             textpos = 17;
-            textwidth = 4.0 * 8.5;
-            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0 * scaler, textwidth * scaler, &last_string);
+            textwidth = 4.0f * 8.5f;
+            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0f * scaler, textwidth * scaler, &last_string);
             for (i = 0; i < 4; i++) {
                 textpart[i] = symbol->text[i + 4];
             }
             textpart[4] = '\0';
             textpos = 50;
-            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0 * scaler, textwidth * scaler, &last_string);
+            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0f * scaler, textwidth * scaler, &last_string);
             textdone = 1;
             switch (strlen(addon)) {
                 case 2:
-                    textpos = xoffset + 86;
-                    textwidth = 2.0 * 8.5;
-                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0 * scaler, textwidth * scaler, &last_string);
+                    textpos = xoffset + 86.f;
+                    textwidth = 2.0f * 8.5f;
+                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0f * scaler, textwidth * scaler, &last_string);
                     break;
                 case 5:
-                    textpos = xoffset + 100;
-                    textwidth = 5.0 * 8.5;
-                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0 * scaler, textwidth * scaler, &last_string);
+                    textpos = xoffset + 100.f;
+                    textwidth = 5.0f * 8.5f;
+                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0f * scaler, textwidth * scaler, &last_string);
                     break;
             }
 
@@ -476,7 +476,7 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
                     case 15:
                     case 28:
                     case 29:
-                        line->length += (5.0 * scaler);
+                        line->length += (5.0f * scaler);
                         break;
                 }
                 i++;
@@ -486,32 +486,32 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
             textpart[1] = '\0';
             textpos = -5; // 7
             textwidth = 8.5;
-            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0 * scaler, textwidth * scaler, &last_string);
+            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0f * scaler, textwidth * scaler, &last_string);
 
             for (i = 0; i < 6; i++) {
                 textpart[i] = symbol->text[i + 1];
             }
             textpart[6] = '\0';
-            textpos = 25;
-            textwidth = 6.0 * 8.5;
-            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0 * scaler, textwidth * scaler, &last_string);
+            textpos = 25.f;
+            textwidth = 6.0f * 8.5f;
+            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0f * scaler, textwidth * scaler, &last_string);
             for (i = 0; i < 6; i++) {
                 textpart[i] = symbol->text[i + 7];
             }
             textpart[6] = '\0';
-            textpos = 72;
-            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0 * scaler, textwidth * scaler, &last_string);
+            textpos = 72.f;
+            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0f * scaler, textwidth * scaler, &last_string);
             textdone = 1;
             switch (strlen(addon)) {
                 case 2:
-                    textpos = xoffset + 114;
-                    textwidth = 2.0 * 8.5;
-                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0 * scaler, textwidth * scaler, &last_string);
+                    textpos = xoffset + 114.f;
+                    textwidth = 2.0f * 8.5f;
+                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0f * scaler, textwidth * scaler, &last_string);
                     break;
                 case 5:
-                    textpos = xoffset + 128;
-                    textwidth = 5.0 * 8.5;
-                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0 * scaler, textwidth * scaler, &last_string);
+                    textpos = xoffset + 128.f;
+                    textwidth = 5.0f * 8.5f;
+                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0f * scaler, textwidth * scaler, &last_string);
                     break;
             }
         }
@@ -531,7 +531,7 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
                     case 27:
                     case 28:
                     case 29:
-                        line->length += (5.0 * scaler);
+                        line->length += (5.0f * scaler);
                         break;
                 }
                 i++;
@@ -539,37 +539,37 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
 
             textpart[0] = symbol->text[0];
             textpart[1] = '\0';
-            textpos = -5;
-            textwidth = 6.2;
-            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn + (2.0 * scaler), 8.0 * scaler, textwidth * scaler, &last_string);
+            textpos = -5.f;
+            textwidth = 6.2f;
+            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn + (2.0f * scaler), 8.0f * scaler, textwidth * scaler, &last_string);
             for (i = 0; i < 5; i++) {
                 textpart[i] = symbol->text[i + 1];
             }
             textpart[5] = '\0';
-            textpos = 27;
-            textwidth = 5.0 * 8.5;
-            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0 * scaler, textwidth * scaler, &last_string);
+            textpos = 27.f;
+            textwidth = 5.0f * 8.5f;
+            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0f * scaler, textwidth * scaler, &last_string);
             for (i = 0; i < 5; i++) {
                 textpart[i] = symbol->text[i + 6];
             }
-            textpos = 68;
-            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0 * scaler, textwidth * scaler, &last_string);
+            textpos = 68.f;
+            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0f * scaler, textwidth * scaler, &last_string);
             textpart[0] = symbol->text[11];
             textpart[1] = '\0';
-            textpos = 100;
-            textwidth = 6.2;
-            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn + (2.0 * scaler), 8.0 * scaler, textwidth * scaler, &last_string);
+            textpos = 100.f;
+            textwidth = 6.2f;
+            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn + (2.0f * scaler), 8.0f * scaler, textwidth * scaler, &last_string);
             textdone = 1;
             switch (strlen(addon)) {
                 case 2:
-                    textpos = xoffset + 116;
-                    textwidth = 2.0 * 8.5;
-                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0 * scaler, textwidth * scaler, &last_string);
+                    textpos = xoffset + 116.f;
+                    textwidth = 2.0f * 8.5f;
+                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0f * scaler, textwidth * scaler, &last_string);
                     break;
                 case 5:
-                    textpos = xoffset + 130;
-                    textwidth = 5.0 * 8.5;
-                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0 * scaler, textwidth * scaler, &last_string);
+                    textpos = xoffset + 130.f;
+                    textwidth = 5.0f * 8.5f;
+                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0f * scaler, textwidth * scaler, &last_string);
                     break;
             }
         }
@@ -584,7 +584,7 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
                     case 14:
                     case 15:
                     case 16:
-                        line->length += (5.0 * scaler);
+                        line->length += (5.0f * scaler);
                         break;
                 }
                 i++;
@@ -592,32 +592,32 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
 
             textpart[0] = symbol->text[0];
             textpart[1] = '\0';
-            textpos = -5;
-            textwidth = 6.2;
-            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn + (2.0 * scaler), 8.0 * scaler, textwidth * scaler, &last_string);
+            textpos = -5.f;
+            textwidth = 6.2f;
+            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn + (2.0f * scaler), 8.0f * scaler, textwidth * scaler, &last_string);
             for (i = 0; i < 6; i++) {
                 textpart[i] = symbol->text[i + 1];
             }
             textpart[6] = '\0';
-            textpos = 24;
-            textwidth = 6.0 * 8.5;
-            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0 * scaler, textwidth * scaler, &last_string);
+            textpos = 24.f;
+            textwidth = 6.0 * 8.5f;
+            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0f * scaler, textwidth * scaler, &last_string);
             textpart[0] = symbol->text[7];
             textpart[1] = '\0';
-            textpos = 55;
-            textwidth = 6.2;
-            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn + (2.0 * scaler), 8.0 * scaler, textwidth * scaler, &last_string);
+            textpos = 55.f;
+            textwidth = 6.2f;
+            render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn + (2.0f * scaler), 8.0f * scaler, textwidth * scaler, &last_string);
             textdone = 1;
             switch (strlen(addon)) {
                 case 2:
-                    textpos = xoffset + 70;
-                    textwidth = 2.0 * 8.5;
-                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0 * scaler, textwidth * scaler, &last_string);
+                    textpos = xoffset + 70.f;
+                    textwidth = 2.0f * 8.5;
+                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0f * scaler, textwidth * scaler, &last_string);
                     break;
                 case 5:
-                    textpos = xoffset + 84;
-                    textwidth = 5.0 * 8.5;
-                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0 * scaler, textwidth * scaler, &last_string);
+                    textpos = xoffset + 84.f;
+                    textwidth = 5.0f * 8.5f;
+                    render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0f * scaler, textwidth * scaler, &last_string);
                     break;
             }
         }
@@ -625,7 +625,7 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
         /* Put normal human readable text at the bottom (and centered) */
         if (textdone == 0) {
             // caculate start xoffset to center text
-            render_plot_add_string(symbol, symbol->text, ((symbol->width / 2.0) + xoffset) * scaler, default_text_posn, 9.0 * scaler, 0.0, &last_string);
+            render_plot_add_string(symbol, symbol->text, ((symbol->width / 2.0f) + xoffset) * scaler, default_text_posn, 9.0f * scaler, 0.0, &last_string);
         }
     }
 
@@ -638,7 +638,7 @@ int render_plot(struct zint_symbol *symbol, const float width, const float heigh
                 if ((symbol->rows > 1) && (is_stackable(symbol->symbology) == 1)) {
                     /* row binding */
                     for (r = 1; r < symbol->rows; r++) {
-                        line = render_plot_create_line(xoffset * scaler, ((r * row_height) + yoffset - 1) * scaler, symbol->width * scaler, 2.0 * scaler);
+                        line = render_plot_create_line(xoffset * scaler, ((r * row_height) + yoffset - 1) * scaler, symbol->width * scaler, 2.0f * scaler);
                         render_plot_add_line(symbol, line, &last_line);
                     }
                 }
@@ -764,7 +764,7 @@ int render_plot_add_string(struct zint_symbol *symbol,
     string->y = y;
     string->width = width;
     string->fsize = fsize;
-    string->length = ustrlen(text);
+    string->length = (int)ustrlen(text);
     string->text = (unsigned char*) malloc(sizeof (unsigned char) * (ustrlen(text) + 1));
     ustrcpy(string->text, text);
 

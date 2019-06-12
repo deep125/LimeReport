@@ -158,12 +158,12 @@ int ps_plot(struct zint_symbol *symbol) {
     bgred = (16 * ctoi(symbol->bgcolour[0])) + ctoi(symbol->bgcolour[1]);
     bggrn = (16 * ctoi(symbol->bgcolour[2])) + ctoi(symbol->bgcolour[3]);
     bgblu = (16 * ctoi(symbol->bgcolour[4])) + ctoi(symbol->bgcolour[5]);
-    red_ink = fgred / 256.0;
-    green_ink = fggrn / 256.0;
-    blue_ink = fgblu / 256.0;
-    red_paper = bgred / 256.0;
-    green_paper = bggrn / 256.0;
-    blue_paper = bgblu / 256.0;
+    red_ink = fgred / 256.0f;
+    green_ink = fggrn / 256.0f;
+    blue_ink = fgblu / 256.0f;
+    red_paper = bgred / 256.0f;
+    green_paper = bggrn / 256.0f;
+    blue_paper = bgblu / 256.0f;
 
     /* Convert RGB to CMYK */
     if (red_ink > green_ink) {
@@ -227,7 +227,7 @@ int ps_plot(struct zint_symbol *symbol) {
     large_bar_height = (symbol->height - preset_height) / large_bar_count;
 
     if (large_bar_count == 0) {
-        symbol->height = preset_height;
+        symbol->height = (int)preset_height;
     }
 
     while (!(module_is_set(symbol, symbol->rows - 1, comp_offset))) {
@@ -327,9 +327,9 @@ int ps_plot(struct zint_symbol *symbol) {
     fprintf(feps, "%.2f 0.00 TB 0.00 %.2f TR\n", (symbol->height + textoffset + yoffset + yoffset) * scaler, (symbol->width + xoffset + xoffset) * scaler);
 
     if (((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
-        default_text_posn = 0.5 * scaler;
+        default_text_posn = 0.5f * scaler;
     } else {
-        default_text_posn = (symbol->border_width + 0.5) * scaler;
+        default_text_posn = (symbol->border_width + 0.5f) * scaler;
     }
 
     if (symbol->symbology == BARCODE_MAXICODE) {
@@ -337,7 +337,7 @@ int ps_plot(struct zint_symbol *symbol) {
         float ax, ay, bx, by, cx, cy, dx, dy, ex, ey, fx, fy, mx, my;
 
 
-        textoffset = 0.0;
+        textoffset = 0;
         if (((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
             fprintf(feps, "TE\n");
             if ((symbol->output_options & CMYK_COLOUR) == 0) {
@@ -375,22 +375,22 @@ int ps_plot(struct zint_symbol *symbol) {
             for (i = 0; i < symbol->width; i++) {
                 if (module_is_set(symbol, r, i)) {
                     /* Dump a hexagon */
-                    my = ((symbol->rows - r - 1)) * 2.135 + 1.43;
-                    ay = my + 1.0 + yoffset;
-                    by = my + 0.5 + yoffset;
-                    cy = my - 0.5 + yoffset;
-                    dy = my - 1.0 + yoffset;
-                    ey = my - 0.5 + yoffset;
-                    fy = my + 0.5 + yoffset;
+                    my = ((symbol->rows - r - 1)) * 2.135f + 1.43f;
+                    ay = my + 1.0f + yoffset;
+                    by = my + 0.5f + yoffset;
+                    cy = my - 0.5f + yoffset;
+                    dy = my - 1.0f + yoffset;
+                    ey = my - 0.5f + yoffset;
+                    fy = my + 0.5f + yoffset;
 
-                    mx = 2.46 * i + 1.23 + (r & 1 ? 1.23 : 0);
+                    mx = 2.46f * i + 1.23f + (r & 1 ? 1.23f : 0);
 
                     ax = mx + xoffset;
-                    bx = mx + 0.86 + xoffset;
-                    cx = mx + 0.86 + xoffset;
+                    bx = mx + 0.86f + xoffset;
+                    cx = mx + 0.86f + xoffset;
                     dx = mx + xoffset;
-                    ex = mx - 0.86 + xoffset;
-                    fx = mx - 0.86 + xoffset;
+                    ex = mx - 0.86f + xoffset;
+                    fx = mx - 0.86f + xoffset;
                     fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TH\n", ax * scaler, ay * scaler, bx * scaler, by * scaler, cx * scaler, cy * scaler, dx * scaler, dy * scaler, ex * scaler, ey * scaler, fx * scaler, fy * scaler);
                 }
             }
@@ -408,7 +408,7 @@ int ps_plot(struct zint_symbol *symbol) {
             if (symbol->row_height[this_row] == 0) {
                 row_height = large_bar_height;
             } else {
-                row_height = symbol->row_height[this_row];
+                row_height = (float)symbol->row_height[this_row];
             }
             row_posn = 0;
             for (i = 0; i < r; i++) {
@@ -464,7 +464,7 @@ int ps_plot(struct zint_symbol *symbol) {
                             fprintf(feps, "%.2f %.2f %.2f %.2f setcmykcolor\n", cyan_ink, magenta_ink, yellow_ink, black_ink);
                         }
                         fprintf(feps, "%.2f %.2f ", (row_height - 5.0) * scaler, (row_posn - 5.0) * scaler);
-                        addon_text_posn = row_posn + row_height - 8.0;
+                        addon_text_posn = row_posn + row_height - 8.0f;
                         addon_latch = 1;
                     }
                     if (latch == 1) {
@@ -545,7 +545,7 @@ int ps_plot(struct zint_symbol *symbol) {
                         fprintf(feps, "matrix currentmatrix\n");
                         fprintf(feps, "/Helvetica findfont\n");
                         fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
-                        textpos = xoffset + 86;
+                        textpos = (float)(xoffset + 86);
                         fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
                         fprintf(feps, " (%s) stringwidth\n", addon);
                         fprintf(feps, "pop\n");
@@ -557,7 +557,7 @@ int ps_plot(struct zint_symbol *symbol) {
                         fprintf(feps, "matrix currentmatrix\n");
                         fprintf(feps, "/Helvetica findfont\n");
                         fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
-                        textpos = xoffset + 100;
+                        textpos = (float)(xoffset + 100);
                         fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
                         fprintf(feps, " (%s) stringwidth\n", addon);
                         fprintf(feps, "pop\n");
@@ -636,7 +636,7 @@ int ps_plot(struct zint_symbol *symbol) {
                         fprintf(feps, "matrix currentmatrix\n");
                         fprintf(feps, "/Helvetica findfont\n");
                         fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
-                        textpos = xoffset + 114;
+                        textpos = (float)(xoffset + 114);
                         fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
                         fprintf(feps, " (%s) stringwidth\n", addon);
                         fprintf(feps, "pop\n");
@@ -648,7 +648,7 @@ int ps_plot(struct zint_symbol *symbol) {
                         fprintf(feps, "matrix currentmatrix\n");
                         fprintf(feps, "/Helvetica findfont\n");
                         fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
-                        textpos = xoffset + 128;
+                        textpos = (float)(xoffset + 128);
                         fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
                         fprintf(feps, " (%s) stringwidth\n", addon);
                         fprintf(feps, "pop\n");
@@ -772,7 +772,7 @@ int ps_plot(struct zint_symbol *symbol) {
                 fprintf(feps, "matrix currentmatrix\n");
                 fprintf(feps, "/Helvetica findfont\n");
                 fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
-                textpos = xoffset + 116;
+                textpos = (float)(xoffset + 116);
                 fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
                 fprintf(feps, " (%s) stringwidth\n", addon);
                 fprintf(feps, "pop\n");
@@ -784,7 +784,7 @@ int ps_plot(struct zint_symbol *symbol) {
                 fprintf(feps, "matrix currentmatrix\n");
                 fprintf(feps, "/Helvetica findfont\n");
                 fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
-                textpos = xoffset + 130;
+                textpos = (float)(xoffset + 130);
                 fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
                 fprintf(feps, " (%s) stringwidth\n", addon);
                 fprintf(feps, "pop\n");
@@ -856,7 +856,7 @@ int ps_plot(struct zint_symbol *symbol) {
                 fprintf(feps, "matrix currentmatrix\n");
                 fprintf(feps, "/Helvetica findfont\n");
                 fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
-                textpos = xoffset + 70;
+                textpos = (float)(xoffset + 70);
                 fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
                 fprintf(feps, " (%s) stringwidth\n", addon);
                 fprintf(feps, "pop\n");
@@ -868,7 +868,7 @@ int ps_plot(struct zint_symbol *symbol) {
                 fprintf(feps, "matrix currentmatrix\n");
                 fprintf(feps, "/Helvetica findfont\n");
                 fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
-                textpos = xoffset + 84;
+                textpos = (float)(xoffset + 84);
                 fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
                 fprintf(feps, " (%s) stringwidth\n", addon);
                 fprintf(feps, "pop\n");
@@ -947,7 +947,7 @@ int ps_plot(struct zint_symbol *symbol) {
         fprintf(feps, "matrix currentmatrix\n");
         fprintf(feps, "/Helvetica findfont\n");
         fprintf(feps, "%.2f scalefont setfont\n", 8.0 * scaler);
-        textpos = symbol->width / 2.0;
+        textpos = symbol->width / 2.0f;
         fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, default_text_posn);
         fprintf(feps, " (%s) stringwidth\n", local_text);
         fprintf(feps, "pop\n");

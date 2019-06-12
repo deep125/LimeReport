@@ -159,7 +159,7 @@ void getRSSwidths(int val, int n, int elements, int maxWidth, int noNarrow) {
 }
 
 /* GS1 DataBar-14 */
-int rss14(struct zint_symbol *symbol, unsigned char source[], int src_len) {
+int rss14(struct zint_symbol *symbol, unsigned char source[], size_t src_len) {
     int error_number = 0, i, j, mask;
     short int accum[112], left_reg[112], right_reg[112], x_reg[112], y_reg[112];
     int data_character[4], data_group[4], v_odd[4], v_even[4];
@@ -727,7 +727,7 @@ int rss14(struct zint_symbol *symbol, unsigned char source[], int src_len) {
 }
 
 /* GS1 DataBar Limited */
-int rsslimited(struct zint_symbol *symbol, unsigned char source[], int src_len) {
+int rsslimited(struct zint_symbol *symbol, unsigned char source[], size_t src_len) {
     int error_number = 0, i, mask;
     short int accum[112], left_reg[112], right_reg[112], x_reg[112], y_reg[112];
     int left_group, right_group, left_odd, left_even, right_odd, right_even;
@@ -1219,9 +1219,9 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 
                     if ((source[19] == '3') && (strlen(source) == 26)) {
                         /* (01) and (3103) */
-                        weight = atof(weight_str) / 1000.0;
+                        weight = (float)(atof(weight_str) / 1000.0);
 
-                        if (weight <= 32.767) {
+                        if (weight <= 32.767f) {
                             encoding_method = 3;
                         }
                     }
@@ -1337,7 +1337,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
         case 3: // 0100
         case 4: // 0101
             bin_append(4 + (encoding_method - 3), 4, binary_string);
-            read_posn = strlen(source);
+            read_posn = (int)strlen(source);
             break;
         case 5: strcat(binary_string, "01100XX");
             read_posn = 20;
@@ -1347,7 +1347,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
             break;
         default: /* modes 7 to 14 */
             bin_append(56 + (encoding_method - 7), 7, binary_string);
-            read_posn = strlen(source);
+            read_posn = (int)strlen(source);
             break;
     }
     if (debug) printf("Setting binary = %s\n", binary_string);
@@ -1738,7 +1738,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
     if (remainder == 12) {
         remainder = 0;
     }
-    symbol_characters = ((strlen(binary_string) + remainder) / 12) + 1;
+    symbol_characters = (int)((strlen(binary_string) + remainder) / 12) + 1;
     
     if ((symbol->symbology == BARCODE_RSS_EXPSTACK) || (symbol->symbology == BARCODE_RSS_EXPSTACK_CC)) {
         characters_per_row = symbol->option_2 * 2;
@@ -1760,7 +1760,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
         symbol_characters = 3;
     }
     
-    remainder = (12 * (symbol_characters - 1)) - strlen(binary_string);
+    remainder = (12 * (symbol_characters - 1)) - (int)strlen(binary_string);
     
     if (latch == 1) {
         /* There is still one more numeric digit to encode */
@@ -1783,7 +1783,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
         if (remainder == 12) {
             remainder = 0;
         }
-        symbol_characters = ((strlen(binary_string) + remainder) / 12) + 1;
+        symbol_characters = (int)((strlen(binary_string) + remainder) / 12) + 1;
 
         if ((symbol->symbology == BARCODE_RSS_EXPSTACK) || (symbol->symbology == BARCODE_RSS_EXPSTACK_CC)) {
             characters_per_row = symbol->option_2 * 2;
@@ -1805,7 +1805,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
             symbol_characters = 3;
         }
 
-        remainder = (12 * (symbol_characters - 1)) - strlen(binary_string);
+        remainder = (12 * (symbol_characters - 1)) - (int)strlen(binary_string);
         
         if (debug) printf("Resultant binary = %s\n", binary_string);
         if (debug) printf("\tLength: %d\n", (int) strlen(binary_string));
@@ -1858,7 +1858,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 }
 
 /* GS1 DataBar Expanded */
-int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len) {
+int rssexpanded(struct zint_symbol *symbol, unsigned char source[], size_t src_len) {
     int i, j, k, p, data_chars, vs[21], group[21], v_odd[21], v_even[21];
     char substring[21][14], latch;
     int char_widths[21][8], checksum, check_widths[8], c_group;
@@ -1904,7 +1904,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
         return i;
     }
 
-    data_chars = strlen(binary_string) / 12;
+    data_chars = (int)strlen(binary_string) / 12;
 
     for (i = 0; i < data_chars; i++) {
         for (j = 0; j < 12; j++) {

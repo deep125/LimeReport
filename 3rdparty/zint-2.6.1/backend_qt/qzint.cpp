@@ -41,7 +41,7 @@ namespace Zint {
         m_scale = 1.0;
         m_option_3 = 0;
         m_hidetext = 0;
-        m_dot_size = 4.0 / 5.0;
+        m_dot_size = 4.0f / 5.0f;
         target_size_horiz = 0;
         target_size_vert = 0;
         m_width = 0;

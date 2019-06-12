@@ -42,9 +42,9 @@
 
 static int AztecMap[22801];
 
-static int count_doubles(const unsigned char source[], const int posn, const size_t src_len) {
-    int c = 0;
-    int i = posn;
+static size_t count_doubles(const unsigned char source[], size_t posn, size_t src_len) {
+    size_t c = 0;
+    size_t i = posn;
     int cond = 1;
     
     do {
@@ -59,9 +59,9 @@ static int count_doubles(const unsigned char source[], const int posn, const siz
     return c;
 }
 
-static int count_cr(char source[], int posn, int length) {
-    int c = 0;
-    int i = posn;
+static size_t count_cr(char source[], size_t posn, size_t length) {
+    size_t c = 0;
+    size_t i = posn;
     int cond = 1;
     
     do {
@@ -76,9 +76,9 @@ static int count_cr(char source[], int posn, int length) {
     return c;
 }
 
-static int count_dotcomma(char source[], int posn, int length) {
-    int c = 0;
-    int i = posn;
+static size_t count_dotcomma(char source[], size_t posn, size_t length) {
+    size_t c = 0;
+    size_t i = posn;
     int cond = 1;
     
     do {
@@ -93,9 +93,9 @@ static int count_dotcomma(char source[], int posn, int length) {
     return c;
 }
 
-static int count_spaces(char source[], int posn, int length) {
-    int c = 0;
-    int i = posn;
+static size_t count_spaces(char source[], size_t posn, size_t length) {
+    size_t c = 0;
+    size_t i = posn;
     int cond = 1;
     
     do {
@@ -110,8 +110,8 @@ static int count_spaces(char source[], int posn, int length) {
     return c;
 }
 
-static char get_next_mode(char encode_mode[], const size_t src_len, const int posn) {
-    int i = posn;
+static char get_next_mode(char encode_mode[], size_t src_len, size_t posn) {
+    size_t i = posn;
     
     do {
         i++;
@@ -123,16 +123,16 @@ static char get_next_mode(char encode_mode[], const size_t src_len, const int po
     }
 }
 
-static int aztec_text_process(const unsigned char source[], const size_t src_len, char binary_string[], const int gs1, const int eci, const int debug) {
+static int aztec_text_process(const unsigned char source[], const size_t src_len, char binary_string[], const int gs1, const unsigned eci, const int debug) {
     
     char *encode_mode;
-    int i, j;
+    size_t i, j;
     char current_mode;
-    int count;
+    size_t count;
     char next_mode;
     char *reduced_source;
     char *reduced_encode_mode;
-    int reduced_length;
+    size_t reduced_length;
     int byte_mode = 0;
     
     encode_mode=(char*)alloca(src_len);
@@ -252,7 +252,7 @@ static int aztec_text_process(const unsigned char source[], const size_t src_len
             reduced_encode_mode[j] = encode_mode[i];
             i += 2;
         } else {
-            reduced_source[j] = source[i];
+            reduced_source[j] = (char)source[i];
             reduced_encode_mode[j] = encode_mode[i];
             i++;
         }
@@ -737,7 +737,7 @@ static int aztec_text_process(const unsigned char source[], const size_t src_len
             if (reduced_source[i] == ' ') {
                 bin_append(1, 5, binary_string); // SP
             } else {
-                bin_append(AztecSymbolChar[(int) reduced_source[i]], 5, binary_string);
+                bin_append((unsigned)(AztecSymbolChar[(int)reduced_source[i]]), 5, binary_string);
             }
         }
         
@@ -745,7 +745,7 @@ static int aztec_text_process(const unsigned char source[], const size_t src_len
             if (reduced_source[i] == ' ') {
                 bin_append(1, 5, binary_string); // SP
             } else {
-                bin_append(AztecSymbolChar[(int) reduced_source[i]], 5, binary_string);
+                bin_append((unsigned)AztecSymbolChar[(int) reduced_source[i]], 5, binary_string);
             }
         }
         
@@ -755,7 +755,7 @@ static int aztec_text_process(const unsigned char source[], const size_t src_len
             } else if (reduced_source[i] == 13) {
                 bin_append(14, 5, binary_string); // CR
             } else {
-                bin_append(AztecSymbolChar[(int) reduced_source[i]], 5, binary_string);
+                bin_append((unsigned)AztecSymbolChar[(int) reduced_source[i]], 5, binary_string);
             }
         }
         
@@ -777,7 +777,7 @@ static int aztec_text_process(const unsigned char source[], const size_t src_len
             } else if (reduced_source[i] == '.') {
                 bin_append(19, 5, binary_string); // Full stop
             } else {
-                bin_append(AztecSymbolChar[(int) reduced_source[i]], 5, binary_string);
+                bin_append((unsigned)AztecSymbolChar[(int) reduced_source[i]], 5, binary_string);
             }
         }
         
@@ -789,12 +789,12 @@ static int aztec_text_process(const unsigned char source[], const size_t src_len
             } else if (reduced_source[i] == '.') {
                 bin_append(13, 4, binary_string); // Full stop
             } else {
-                bin_append(AztecSymbolChar[(int) reduced_source[i]], 4, binary_string);
+                bin_append((unsigned)AztecSymbolChar[(int) reduced_source[i]], 4, binary_string);
             }
         }
         
         if (reduced_encode_mode[i] == 'B') {
-            bin_append(reduced_source[i], 8, binary_string);
+            bin_append((unsigned)reduced_source[i], 8, binary_string);
         }
     }
     
@@ -959,12 +959,12 @@ static void populate_map() {
     AztecMap[(avoidReferenceGrid(77) * 151) + avoidReferenceGrid(76)] = 1;
 }
 
-int aztec(struct zint_symbol *symbol, unsigned char source[], const size_t length) {
+int aztec(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     int x, y, i, j, p, data_blocks, ecc_blocks, layers, total_bits;
     char binary_string[20000], bit_pattern[20045], descriptor[42];
     char adjusted_string[20000];
     unsigned char desc_data[4], desc_ecc[6];
-    int err_code, ecc_level, compact, data_length, data_maxsize, codeword_size, adjusted_length;
+    int err_code, ecc_level, compact=0, data_length, data_maxsize, codeword_size=0, adjusted_length;
     int remainder, padbits, count, gs1, adjustment_size;
     int debug = symbol->debug, reader = 0;
     int comp_loop = 4;
@@ -1569,7 +1569,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], const size_t lengt
 }
 
 /* Encodes Aztec runes as specified in ISO/IEC 24778:2008 Annex A */
-int aztec_runes(struct zint_symbol *symbol, unsigned char source[], int length) {
+int aztec_runes(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     int input_value, error_number, i, y, x;
     char binary_string[28];
     unsigned char data_codewords[3], ecc_codewords[6];

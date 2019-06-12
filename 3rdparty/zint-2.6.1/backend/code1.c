@@ -117,7 +117,7 @@ int isedi(unsigned char input) {
     return result;
 }
 
-int dq4bi(unsigned char source[], int sourcelen, int position) {
+int dq4bi(unsigned char source[], size_t sourcelen, int position) {
     int i;
 
     for (i = position; isedi(source[position + i]) && ((position + i) < sourcelen); i++);
@@ -140,7 +140,7 @@ int dq4bi(unsigned char source[], int sourcelen, int position) {
     return 0;
 }
 
-static int c1_look_ahead_test(unsigned char source[], int sourcelen, int position, int current_mode, int gs1) {
+static int c1_look_ahead_test(unsigned char source[], size_t sourcelen, int position, int current_mode, int gs1) {
     float ascii_count, c40_count, text_count, edi_count, byte_count;
     char reduced_char;
     int done, best_scheme, best_count, sp;
@@ -183,7 +183,7 @@ static int c1_look_ahead_test(unsigned char source[], int sourcelen, int positio
         if ((source[sp] >= '0') && (source[sp] <= '9')) {
             ascii_count += 0.5;
         } else {
-            ascii_count = ceil(ascii_count);
+            ascii_count = (float)ceil(ascii_count);
             if (source[sp] > 127) {
                 ascii_count += 2.0;
             } else {
@@ -194,76 +194,76 @@ static int c1_look_ahead_test(unsigned char source[], int sourcelen, int positio
         /* Step M */
         done = 0;
         if (reduced_char == ' ') {
-            c40_count += (2.0 / 3.0);
+            c40_count += (2.0f / 3.0f);
             done = 1;
         }
         if ((reduced_char >= '0') && (reduced_char <= '9')) {
-            c40_count += (2.0 / 3.0);
+            c40_count += (2.0f / 3.0f);
             done = 1;
         }
         if ((reduced_char >= 'A') && (reduced_char <= 'Z')) {
-            c40_count += (2.0 / 3.0);
+            c40_count += (2.0f / 3.0f);
             done = 1;
         }
         if (source[sp] > 127) {
-            c40_count += (4.0 / 3.0);
+            c40_count += (4.0f / 3.0f);
         }
         if (done == 0) {
-            c40_count += (4.0 / 3.0);
+            c40_count += (4.0f / 3.0f);
         }
 
         /* Step N */
         done = 0;
         if (reduced_char == ' ') {
-            text_count += (2.0 / 3.0);
+            text_count += (2.0f / 3.0f);
             done = 1;
         }
         if ((reduced_char >= '0') && (reduced_char <= '9')) {
-            text_count += (2.0 / 3.0);
+            text_count += (2.0f / 3.0f);
             done = 1;
         }
         if ((reduced_char >= 'a') && (reduced_char <= 'z')) {
-            text_count += (2.0 / 3.0);
+            text_count += (2.0f / 3.0f);
             done = 1;
         }
         if (source[sp] > 127) {
-            text_count += (4.0 / 3.0);
+            text_count += (4.0f / 3.0f);
         }
         if (done == 0) {
-            text_count += (4.0 / 3.0);
+            text_count += (4.0f / 3.0f);
         }
 
         /* Step O */
         done = 0;
         if (source[sp] == 13) {
-            edi_count += (2.0 / 3.0);
+            edi_count += (2.0f / 3.0f);
             done = 1;
         }
         if (source[sp] == '*') {
-            edi_count += (2.0 / 3.0);
+            edi_count += (2.0f / 3.0f);
             done = 1;
         }
         if (source[sp] == '>') {
-            edi_count += (2.0 / 3.0);
+            edi_count += (2.0f / 3.0f);
             done = 1;
         }
         if (source[sp] == ' ') {
-            edi_count += (2.0 / 3.0);
+            edi_count += (2.0f / 3.0f);
             done = 1;
         }
         if ((source[sp] >= '0') && (source[sp] <= '9')) {
-            edi_count += (2.0 / 3.0);
+            edi_count += (2.0f / 3.0f);
             done = 1;
         }
         if ((source[sp] >= 'A') && (source[sp] <= 'Z')) {
-            edi_count += (2.0 / 3.0);
+            edi_count += (2.0f / 3.0f);
             done = 1;
         }
         if (source[sp] > 127) {
-            edi_count += (13.0 / 3.0);
+            edi_count += (13.0f / 3.0f);
         } else {
             if (done == 0) {
-                edi_count += (10.0 / 3.0);
+                edi_count += (10.0f / 3.0f);
             }
         }
 
@@ -276,12 +276,12 @@ static int c1_look_ahead_test(unsigned char source[], int sourcelen, int positio
 
     }
 
-    ascii_count = ceil(ascii_count);
-    c40_count = ceil(c40_count);
-    text_count = ceil(text_count);
-    edi_count = ceil(edi_count);
-    byte_count = ceil(byte_count);
-    best_scheme = C1_ASCII;
+    ascii_count =   (float)ceil(ascii_count);
+    c40_count =     (float)ceil(c40_count);
+    text_count =    (float)ceil(text_count);
+    edi_count =     (float)ceil(edi_count);
+    byte_count =    (float)ceil(byte_count);
+    best_scheme =   C1_ASCII;
 
     if (sp == sourcelen) {
         /* Step K */
@@ -349,7 +349,7 @@ static int c1_look_ahead_test(unsigned char source[], int sourcelen, int positio
     return best_scheme;
 }
 
-int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int target[], int length) {
+int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int target[], size_t length) {
     int current_mode, next_mode;
     int sp, tp, gs1, i, j, p, latch;
     int c40_buffer[6], c40_p;
@@ -841,7 +841,7 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 
             next_mode = C1_DECIMAL;
 
-            data_left = length - sp;
+            data_left = (int)length - sp;
             decimal_count = 0;
 
             if (data_left >= 1) {
@@ -1178,7 +1178,7 @@ void block_copy(struct zint_symbol *symbol, char grid[][120], int start_row, int
     }
 }
 
-int code_one(struct zint_symbol *symbol, unsigned char source[], int length) {
+int code_one(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     int size = 1, i, j, data_blocks;
 
     char datagrid[136][120];

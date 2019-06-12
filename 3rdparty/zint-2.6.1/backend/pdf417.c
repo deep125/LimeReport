@@ -828,7 +828,7 @@ static int pdf417(struct zint_symbol *symbol, unsigned char chaine[], const size
 }
 
 /* 345 */
-int pdf417enc(struct zint_symbol *symbol, unsigned char source[], const size_t length) {
+int pdf417enc(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     int codeerr, error_number;
 
     error_number = 0;
@@ -881,7 +881,7 @@ int pdf417enc(struct zint_symbol *symbol, unsigned char source[], const size_t l
 }
 
 /* like PDF417 only much smaller! */
-int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], const size_t length) {
+int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], size_t length) {
     int i, k, j, indexchaine, indexliste, mode, longueur, mccorrection[50], offset;
     int total, chainemc[2700], mclength, dummy[5], codeerr;
     char pattern[580];
@@ -1270,7 +1270,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], const size_
             }
         }
         symbol->row_height[i] = 2;
-        symbol->width = strlen(pattern);
+        symbol->width = (int)strlen(pattern);
 
         /* Set up RAPs and Cluster for next row */
         LeftRAP++;

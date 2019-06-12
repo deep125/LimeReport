@@ -284,7 +284,7 @@ void c128_set_b(unsigned char source, char dest[], int values[], int *bar_chars)
 void c128_set_c(unsigned char source_a, unsigned char source_b, char dest[], int values[], int *bar_chars) {
     int weight;
 
-    weight = (10 * ctoi(source_a)) + ctoi(source_b);
+    weight = (10 * ctoi((char)source_a)) + ctoi((char)source_b);
     strcat(dest, C128Table[weight]);
     values[(*bar_chars)] = weight;
     (*bar_chars)++;
@@ -292,7 +292,7 @@ void c128_set_c(unsigned char source_a, unsigned char source_b, char dest[], int
 
 /* Handle Code 128 and NVE-18 */
 int code_128(struct zint_symbol *symbol, unsigned char source[], const size_t length) { 
-    int i, j, k, values[170] = {0}, bar_characters, read, total_sum;
+    int   i, j, k, values[170] = {0}, bar_characters, read, total_sum;
     int error_number, indexchaine, indexliste, f_state;
     size_t sourcelen;
     char set[170] = {' '}, fset[170] = {' '}, mode, last_set, current_set = ' ';
@@ -316,7 +316,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], const size_t le
     }
 
     /* Detect extended ASCII characters */
-    for (i = 0; i < sourcelen; i++) {
+    for (i = 0; i < (int)sourcelen; i++) {
         if (source[i] >= 128)
             fset[i] = 'f';
     }
@@ -324,7 +324,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], const size_t le
 
     /* Decide when to latch to extended mode - Annex E note 3 */
     j = 0;
-    for (i = 0; i < sourcelen; i++) {
+    for (i = 0; i < (int)sourcelen; i++) {
         if (fset[i] == 'f') {
             j++;
         } else {
@@ -337,7 +337,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], const size_t le
             }
         }
 
-        if ((j >= 3) && (i == (sourcelen - 1))) {
+        if ((j >= 3) && (i == (int)(sourcelen - 1))) {
             for (k = i; k > (i - 3); k--) {
                 fset[k] = 'F';
             }
@@ -345,11 +345,11 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], const size_t le
     }
 
     /* Decide if it is worth reverting to 646 encodation for a few characters as described in 4.3.4.2 (d) */
-    for (i = 1; i < sourcelen; i++) {
+    for (i = 1; i < (int)sourcelen; i++) {
         if ((fset[i - 1] == 'F') && (fset[i] == ' ')) {
             /* Detected a change from 8859-1 to 646 - count how long for */
-            for (j = 0; (fset[i + j] == ' ') && ((i + j) < sourcelen); j++);
-            if ((j < 5) || ((j < 3) && ((i + j) == (sourcelen - 1)))) {
+            for (j = 0; (fset[i + j] == ' ') && ((i + j) < (int)sourcelen); j++);
+            if ((j < 5) || ((j < 3) && ((i + j) == (int)(sourcelen - 1)))) {
                 /* Uses the same figures recommended by Annex E note 3 */
                 /* Change to shifting back rather than latching back */
                 for (k = 0; k < j; k++) {
@@ -363,7 +363,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], const size_t le
     indexliste = 0;
     indexchaine = 0;
 
-    mode = parunmodd(source[indexchaine]);
+    mode = (char)parunmodd(source[indexchaine]);
     if ((symbol->symbology == BARCODE_CODE128B) && (mode == ABORC)) {
         mode = AORB;
     }
@@ -374,16 +374,16 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], const size_t le
 
     do {
         list[1][indexliste] = mode;
-        while ((list[1][indexliste] == mode) && (indexchaine < sourcelen)) {
+        while ((list[1][indexliste] == mode) && (indexchaine < (int)sourcelen)) {
             list[0][indexliste]++;
             indexchaine++;
-            mode = parunmodd(source[indexchaine]);
+            mode = (char)parunmodd(source[indexchaine]);
             if ((symbol->symbology == BARCODE_CODE128B) && (mode == ABORC)) {
                 mode = AORB;
             }
         }
         indexliste++;
-    } while (indexchaine < sourcelen);
+    } while (indexchaine < (int)sourcelen);
 
     dxsmooth(&indexliste);
 
@@ -450,39 +450,39 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], const size_t le
        being too long */
     last_set = ' ';
     glyph_count = 0.0;
-    for (i = 0; i < sourcelen; i++) {
+    for (i = 0; i < (int)sourcelen; i++) {
         if ((set[i] == 'a') || (set[i] == 'b')) {
-            glyph_count = glyph_count + 1.0;
+            glyph_count = glyph_count + 1.0f;
         }
         if ((fset[i] == 'f') || (fset[i] == 'n')) {
-            glyph_count = glyph_count + 1.0;
+            glyph_count = glyph_count + 1.0f;
         }
         if (((set[i] == 'A') || (set[i] == 'B')) || (set[i] == 'C')) {
             if (set[i] != last_set) {
                 last_set = set[i];
-                glyph_count = glyph_count + 1.0;
+                glyph_count = glyph_count + 1.0f;
             }
         }
         if (i == 0) {
             if (fset[i] == 'F') {
-                glyph_count = glyph_count + 2.0;
+                glyph_count = glyph_count + 2.0f;
             }
         } else {
             if ((fset[i] == 'F') && (fset[i - 1] != 'F')) {
-                glyph_count = glyph_count + 2.0;
+                glyph_count = glyph_count + 2.0f;
             }
             if ((fset[i] != 'F') && (fset[i - 1] == 'F')) {
-                glyph_count = glyph_count + 2.0;
+                glyph_count = glyph_count + 2.0f;
             }
         }
 
         if (set[i] == 'C') {
-            glyph_count = glyph_count + 0.5;
+            glyph_count = glyph_count + 0.5f;
         } else {
-            glyph_count = glyph_count + 1.0;
+            glyph_count = glyph_count + 1.0f;
         }
     }
-    if (glyph_count > 60.0) {
+    if (glyph_count > 60.0f) {
         strcpy(symbol->errtxt, "341: Input too long");
         return ZINT_ERROR_TOO_LONG;
     }
@@ -662,7 +662,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], const size_t le
                 break;
         }
 
-    } while (read < sourcelen);
+    } while (read < (int)sourcelen);
 
     /* check digit calculation */
     total_sum = 0;
@@ -682,7 +682,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], const size_t le
 }
 
 /* Handle EAN-128 (Now known as GS1-128) */
-int ean_128(struct zint_symbol *symbol, unsigned char source[], const size_t length) {
+int ean_128(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     int i, j, values[170], bar_characters, read, total_sum;
     int error_number, indexchaine, indexliste;
     char set[170], mode, last_set;
@@ -711,7 +711,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[], const size_t len
         strcpy(symbol->errtxt, "342: Input too long");
         return ZINT_ERROR_TOO_LONG;
     }
-    for (i = 0; i < length; i++) {
+    for (i = 0; i < (int)length; i++) {
         if (source[i] == '\0') {
             /* Null characters not allowed! */
             strcpy(symbol->errtxt, "343: NULL character in input data");
@@ -738,7 +738,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[], const size_t len
     indexliste = 0;
     indexchaine = 0;
 
-    mode = parunmodd(reduced[indexchaine]);
+    mode = (char)parunmodd((unsigned char)reduced[indexchaine]);
     if (reduced[indexchaine] == '[') {
         mode = ABORC;
     }
@@ -752,7 +752,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[], const size_t len
         while ((list[1][indexliste] == mode) && (indexchaine < (int) strlen(reduced))) {
             list[0][indexliste]++;
             indexchaine++;
-            mode = parunmodd(reduced[indexchaine]);
+            mode = (char)parunmodd((unsigned char)reduced[indexchaine]);
             if (reduced[indexchaine] == '[') {
                 mode = ABORC;
             }
@@ -828,22 +828,22 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[], const size_t len
     glyph_count = 0.0;
     for (i = 0; i < (int) strlen(reduced); i++) {
         if ((set[i] == 'a') || (set[i] == 'b')) {
-            glyph_count = glyph_count + 1.0;
+            glyph_count = glyph_count + 1.0f;
         }
         if (((set[i] == 'A') || (set[i] == 'B')) || (set[i] == 'C')) {
             if (set[i] != last_set) {
                 last_set = set[i];
-                glyph_count = glyph_count + 1.0;
+                glyph_count = glyph_count + 1.0f;
             }
         }
 
         if ((set[i] == 'C') && (reduced[i] != '[')) {
-            glyph_count = glyph_count + 0.5;
+            glyph_count = glyph_count + 0.5f;
         } else {
-            glyph_count = glyph_count + 1.0;
+            glyph_count = glyph_count + 1.0f;
         }
     }
-    if (glyph_count > 60.0) {
+    if (glyph_count > 60.0f) {
         strcpy(symbol->errtxt, "344: Input too long");
         return ZINT_ERROR_TOO_LONG;
     }
@@ -901,16 +901,16 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[], const size_t len
             switch (set[read]) { /* Encode data characters */
                 case 'A':
                 case 'a':
-                    c128_set_a(reduced[read], dest, values, &bar_characters);
+                    c128_set_a((unsigned char)reduced[read], dest, values, &bar_characters);
                     read++;
                     break;
                 case 'B':
                 case 'b':
-                    c128_set_b(reduced[read], dest, values, &bar_characters);
+                    c128_set_b((unsigned char)reduced[read], dest, values, &bar_characters);
                     read++;
                     break;
                 case 'C':
-                    c128_set_c(reduced[read], reduced[read + 1], dest, values, &bar_characters);
+                    c128_set_c((unsigned char)reduced[read], (unsigned char)reduced[read + 1], dest, values, &bar_characters);
                     read += 2;
                     break;
             }
@@ -987,7 +987,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[], const size_t len
         }
     }
 
-    for (i = 0; i < length; i++) {
+    for (i = 0; i < (int)length; i++) {
         if ((source[i] != '[') && (source[i] != ']')) {
             symbol->text[i] = source[i];
         }
@@ -1003,8 +1003,9 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[], const size_t len
 }
 
 /* Add check digit if encoding an NVE18 symbol */
-int nve_18(struct zint_symbol *symbol, unsigned char source[], int length) {
-    int error_number, zeroes, i, nve_check, total_sum, sourcelen;
+int nve_18(struct zint_symbol *symbol, unsigned char source[], size_t length) {
+    int error_number, nve_check, total_sum,i ;
+    size_t zeroes,  sourcelen;
     unsigned char ean128_equiv[25];
 
     memset(ean128_equiv, 0, 25);
@@ -1026,18 +1027,18 @@ int nve_18(struct zint_symbol *symbol, unsigned char source[], int length) {
     strcpy((char*) ean128_equiv + 4 + zeroes, (char*) source);
 
     total_sum = 0;
-    for (i = sourcelen - 1; i >= 0; i--) {
-        total_sum += ctoi(source[i]);
+    for (i = (int)(sourcelen - 1); i >= 0; i--) {
+        total_sum += ctoi((char)source[i]);
 
         if (!(i & 1)) {
-            total_sum += 2 * ctoi(source[i]);
+            total_sum += 2 * ctoi((char)source[i]);
         }
     }
     nve_check = 10 - total_sum % 10;
     if (nve_check == 10) {
         nve_check = 0;
     }
-    ean128_equiv[21] = itoc(nve_check);
+    ean128_equiv[21] = (unsigned char)itoc(nve_check);
     ean128_equiv[22] = '\0';
 
     error_number = ean_128(symbol, ean128_equiv, ustrlen(ean128_equiv));
@@ -1046,9 +1047,10 @@ int nve_18(struct zint_symbol *symbol, unsigned char source[], int length) {
 }
 
 /* EAN-14 - A version of EAN-128 */
-int ean_14(struct zint_symbol *symbol, unsigned char source[], int length) {
+int ean_14(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     int i, count, check_digit;
-    int error_number, zeroes;
+    int error_number;
+    size_t zeroes;
     unsigned char ean128_equiv[20];
 
     if (length > 13) {
@@ -1068,18 +1070,18 @@ int ean_14(struct zint_symbol *symbol, unsigned char source[], int length) {
     ustrcpy(ean128_equiv + 4 + zeroes, source);
 
     count = 0;
-    for (i = length - 1; i >= 0; i--) {
-        count += ctoi(source[i]);
+    for (i = (int)(length - 1); i >= 0; i--) {
+        count += ctoi((char)source[i]);
 
         if (!(i & 1)) {
-            count += 2 * ctoi(source[i]);
+            count += 2 * ctoi((char)source[i]);
         }
     }
     check_digit = 10 - (count % 10);
     if (check_digit == 10) {
         check_digit = 0;
     }
-    ean128_equiv[17] = itoc(check_digit);
+    ean128_equiv[17] = (unsigned char)itoc(check_digit);
     ean128_equiv[18] = '\0';
 
     error_number = ean_128(symbol, ean128_equiv, ustrlen(ean128_equiv));

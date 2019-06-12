@@ -256,7 +256,7 @@ static void c16k_set_c(const unsigned char source_a, unsigned char source_b, uns
     (*bar_chars)++;
 }
 
-int code16k(struct zint_symbol *symbol, unsigned char source[], const size_t length) {
+int code16k(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     char width_pattern[100];
     int current_row, rows_needed, flip_flop, looper, first_check, second_check;
     int indexchaine, f_state;
@@ -355,7 +355,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[], const size_t len
     /* Put set data into set[] */
     read = 0;
     for (i = 0; i < indexliste; i++) {
-        for (j = 0; j < list[0][i]; j++) {
+        for (j = 0; (int)j < list[0][i]; j++) {
             switch (list[1][i]) {
                 case SHIFTA: set[read] = 'a';
                     break;
@@ -434,42 +434,42 @@ int code16k(struct zint_symbol *symbol, unsigned char source[], const size_t len
     glyph_count = 0.0;
     for (i = 0; i < input_length; i++) {
         if ((set[i] == 'a') || (set[i] == 'b')) {
-            glyph_count = glyph_count + 1.0;
+            glyph_count = glyph_count + 1.0f;
         }
         if ((fset[i] == 'f') || (fset[i] == 'n')) {
-            glyph_count = glyph_count + 1.0;
+            glyph_count = glyph_count + 1.0f;
         }
         if (((set[i] == 'A') || (set[i] == 'B')) || (set[i] == 'C')) {
             if (set[i] != last_set) {
                 last_set = set[i];
-                glyph_count = glyph_count + 1.0;
+                glyph_count = glyph_count + 1.0f;
             }
         }
         if (i == 0) {
             if ((set[i] == 'B') && (set[1] == 'C')) {
-                glyph_count = glyph_count - 1.0;
+                glyph_count = glyph_count - 1.0f;
             }
             if ((set[i] == 'B') && (set[1] == 'B')) {
                 if (set[2] == 'C') {
-                    glyph_count = glyph_count - 1.0;
+                    glyph_count = glyph_count - 1.0f;
                 }
             }
             if (fset[i] == 'F') {
-                glyph_count = glyph_count + 2.0;
+                glyph_count = glyph_count + 2.0f;
             }
         } else {
             if ((fset[i] == 'F') && (fset[i - 1] != 'F')) {
-                glyph_count = glyph_count + 2.0;
+                glyph_count = glyph_count + 2.0f;
             }
             if ((fset[i] != 'F') && (fset[i - 1] == 'F')) {
-                glyph_count = glyph_count + 2.0;
+                glyph_count = glyph_count + 2.0f;
             }
         }
 
         if ((set[i] == 'C') && (!((gs1) && (source[i] == '[')))) {
-            glyph_count = glyph_count + 0.5;
+            glyph_count = glyph_count + 0.5f;
         } else {
-            glyph_count = glyph_count + 1.0;
+            glyph_count = glyph_count + 1.0f;
         }
     }
 
@@ -478,13 +478,13 @@ int code16k(struct zint_symbol *symbol, unsigned char source[], const size_t len
         glyph_count--;
     }
 
-    if (glyph_count > 77.0) {
+    if (glyph_count > 77.0f) {
         strcpy(symbol->errtxt, "421: Input too long");
         return ZINT_ERROR_TOO_LONG;
     }
 
     /* Calculate how tall the symbol will be */
-    glyph_count = glyph_count + 2.0;
+    glyph_count = glyph_count + 2.0f;
     i = (int)glyph_count;
     rows_needed = (i / 5);
     if (i % 5 > 0) {

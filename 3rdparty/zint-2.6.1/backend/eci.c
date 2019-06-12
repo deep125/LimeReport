@@ -39,7 +39,7 @@
 #endif
 
 /* Convert Unicode to other character encodings */
-int utf_to_eci(const int eci, const unsigned char source[], unsigned char dest[], size_t *length) {
+int utf_to_eci(unsigned eci, const unsigned char source[], unsigned char dest[], size_t *length) {
     int glyph;
     int bytelen;
     int in_posn;
@@ -288,8 +288,8 @@ int utf_to_eci(const int eci, const unsigned char source[], unsigned char dest[]
 }
 
 /* Find the lowest ECI mode which will encode a given set of Unicode text */
-int get_best_eci(unsigned char source[], size_t length) {
-    int eci = 3;
+unsigned get_best_eci(unsigned char source[], size_t length) {
+    unsigned eci = 3;
 
 #ifndef _MSC_VER
     unsigned char local_source[length + 1];

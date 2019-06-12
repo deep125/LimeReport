@@ -243,7 +243,7 @@ extern unsigned short USPS_MSB_Math_CRC11GenerateFrameCheckSequence(unsigned cha
     return FrameCheckSequence;
 }
 
-int imail(struct zint_symbol *symbol, unsigned char source[], int length) {
+int imail(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     char data_pattern[200];
     int error_number;
     int i, j, read;

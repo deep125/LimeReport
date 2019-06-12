@@ -66,11 +66,11 @@
 #define UINT unsigned short
 
 extern int general_rules(char field[], char type[]);
-extern int eanx(struct zint_symbol *symbol, unsigned char source[], int length);
-extern int ean_128(struct zint_symbol *symbol, unsigned char source[], const size_t length);
-extern int rss14(struct zint_symbol *symbol, unsigned char source[], int length);
-extern int rsslimited(struct zint_symbol *symbol, unsigned char source[], int length);
-extern int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int length);
+extern int eanx(struct zint_symbol *symbol, unsigned char source[], size_t length);
+extern int ean_128(struct zint_symbol *symbol, unsigned char source[], size_t length);
+extern int rss14(struct zint_symbol *symbol, unsigned char source[], size_t length);
+extern int rsslimited(struct zint_symbol *symbol, unsigned char source[], size_t length);
+extern int rssexpanded(struct zint_symbol *symbol, unsigned char source[], size_t length);
 
 static UINT pwr928[69][7];
 
@@ -308,7 +308,7 @@ static int cc_a(struct zint_symbol *symbol, char source[], int cc_width) {
         }
         symbol->row_height[i] = 2;
         symbol->rows++;
-        symbol->width = strlen(pattern);
+        symbol->width = (int)strlen(pattern);
 
         /* Set up RAPs and Cluster for next row */
         LeftRAP++;
@@ -348,7 +348,7 @@ static int cc_b(struct zint_symbol *symbol, char source[], int cc_width) {
     int variant, LeftRAPStart, CentreRAPStart, RightRAPStart, StartCluster;
     int LeftRAP, CentreRAP, RightRAP, Cluster, loop;
 
-    length = strlen(source) / 8;
+    length = (int)strlen(source) / 8;
 
     for (i = 0; i < length; i++) {
         binloc = i * 8;
@@ -561,7 +561,7 @@ static int cc_b(struct zint_symbol *symbol, char source[], int cc_width) {
             }
         }
         symbol->row_height[i] = 2;
-        symbol->width = strlen(pattern);
+        symbol->width = (int)strlen(pattern);
 
         /* Set up RAPs and Cluster for next row */
         LeftRAP++;
@@ -599,7 +599,7 @@ static int cc_c(struct zint_symbol *symbol, char source[], int cc_width, int ecc
     int c1, c2, c3, dummy[35];
     char pattern[580];
 
-    length = strlen(source) / 8;
+    length = (int)strlen(source) / 8;
 
     for (i = 0; i < length; i++) {
         binloc = i * 8;
@@ -1583,7 +1583,7 @@ static int cc_binary_string(struct zint_symbol *symbol, const char source[], cha
     return 0;
 }
 
-int linear_dummy_run(unsigned char *source, int length) {
+int linear_dummy_run(unsigned char *source, size_t length) {
     struct zint_symbol *dummy;
     int error_number;
     int linear_width;
@@ -1602,12 +1602,12 @@ int linear_dummy_run(unsigned char *source, int length) {
     }
 }
 
-int composite(struct zint_symbol *symbol, unsigned char source[], int length) {
+int composite(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     int error_number, cc_mode, cc_width, ecc_level;
     int j, i, k;
-    unsigned int rs = length + 1;
-    unsigned int bs = 20 * rs;
-    unsigned int pri_len;
+    size_t rs = length + 1;
+    size_t bs = 20 * rs;
+    size_t pri_len;
 #ifndef _MSC_VER
     char reduced[rs];
     char binary_string[bs];
@@ -1621,7 +1621,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[], int length) {
     
     /* Perform sanity checks on input options first */
     error_number = 0;
-    pri_len = (int)strlen(symbol->primary);
+    pri_len = strlen(symbol->primary);
     if (pri_len == 0) {
         strcpy(symbol->errtxt, "445: No primary (linear) message in 2D composite");
         return ZINT_ERROR_INVALID_OPTION;

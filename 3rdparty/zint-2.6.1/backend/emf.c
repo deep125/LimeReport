@@ -106,9 +106,9 @@ int count_hexagons(struct zint_symbol *symbol) {
     return hexagons;
 }
 
-void utfle_copy(unsigned char *output, unsigned char *input, int length) {
-    int i;
-    int o;
+void utfle_copy(unsigned char *output, unsigned char *input, size_t length) {
+    size_t i;
+    size_t o;
     
     /* Convert UTF-8 to UTF-16LE - only needs to handle characters <= U+00FF */
     i = 0;
@@ -130,7 +130,7 @@ void utfle_copy(unsigned char *output, unsigned char *input, int length) {
     } while (i < length);
 }
 
-int bump_up(int input) {
+size_t bump_up(size_t input) {
     /* Strings length must be a multiple of 4 bytes */
     if ((input % 2) == 1) {
         input++;
@@ -150,7 +150,7 @@ int emf_plot(struct zint_symbol *symbol) {
     int rectangle_count, this_rectangle;
     int circle_count, this_circle;
     int hexagon_count, this_hexagon;
-    int bytecount, recordcount;
+    size_t bytecount, recordcount;
     int upcean = 0;
     unsigned char regw[7];
     unsigned char regx[7];
@@ -273,7 +273,7 @@ int emf_plot(struct zint_symbol *symbol) {
     large_bar_height = (symbol->height - preset_height) / large_bar_count;
 
     if (large_bar_count == 0) {
-        symbol->height = preset_height;
+        symbol->height = (int)preset_height;
     }
 
     while (!(module_is_set(symbol, symbol->rows - 1, comp_offset))) {
@@ -338,11 +338,11 @@ int emf_plot(struct zint_symbol *symbol) {
     emr_header.size = 88; // Assuming no additional data in header
     emr_header.emf_header.bounds.left = 0;
     if (symbol->symbology != BARCODE_MAXICODE) {
-        emr_header.emf_header.bounds.right = ceil((symbol->width + xoffset + xoffset) * scaler);
-        emr_header.emf_header.bounds.bottom = ceil((symbol->height + textoffset + yoffset + yoffset) * scaler);
+        emr_header.emf_header.bounds.right =    (int)ceil((symbol->width + xoffset + xoffset) * scaler);
+        emr_header.emf_header.bounds.bottom =   (int)ceil((symbol->height + textoffset + yoffset + yoffset) * scaler);
     } else {
-        emr_header.emf_header.bounds.right = ceil((74.0F + xoffset + xoffset) * scaler);
-        emr_header.emf_header.bounds.bottom = ceil((72.0F + yoffset + yoffset) * scaler);
+        emr_header.emf_header.bounds.right =    (int)ceil((74.0F + xoffset + xoffset) * scaler);
+        emr_header.emf_header.bounds.bottom =   (int)ceil((72.0F + yoffset + yoffset) * scaler);
     }
     emr_header.emf_header.bounds.top = 0;
     emr_header.emf_header.frame.left = 0;
@@ -425,7 +425,7 @@ int emf_plot(struct zint_symbol *symbol) {
         emr_extcreatefontindirectw.type = 0x00000052; // EMR_EXTCREATEFONTINDIRECTW
         emr_extcreatefontindirectw.size = 104;
         emr_extcreatefontindirectw.ih_fonts = 4;
-        emr_extcreatefontindirectw.elw.height = (8 * scaler);
+        emr_extcreatefontindirectw.elw.height = (int)(8 * scaler);
         emr_extcreatefontindirectw.elw.width = 0; // automatic
         emr_extcreatefontindirectw.elw.escapement = 0;
         emr_extcreatefontindirectw.elw.orientation = 0;
@@ -462,7 +462,7 @@ int emf_plot(struct zint_symbol *symbol) {
             } else {
                 emr_extcreatefontindirectw_big.ih_fonts = 5;
             }
-            emr_extcreatefontindirectw_big.elw.height = (11 * scaler);
+            emr_extcreatefontindirectw_big.elw.height = (int32_t)(11 * scaler);
             emr_extcreatefontindirectw_big.elw.width = 0; // automatic
             emr_extcreatefontindirectw_big.elw.escapement = 0;
             emr_extcreatefontindirectw_big.elw.orientation = 0;
@@ -494,7 +494,7 @@ int emf_plot(struct zint_symbol *symbol) {
     if ((symbol->show_hrt != 0) && (ustrlen(local_text) != 0)) {
 
         if ((symbol->symbology == BARCODE_EANX) || (symbol->symbology == BARCODE_EANX_CC) || (symbol->symbology == BARCODE_ISBNX)) {
-            latch = ustrlen(local_text);
+            latch = (int)ustrlen(local_text);
             for(i = 0; i < ustrlen(local_text); i++) {
                 if (local_text[i] == '+') {
                     latch = i;
@@ -530,7 +530,7 @@ int emf_plot(struct zint_symbol *symbol) {
         }
 
         if ((symbol->symbology == BARCODE_UPCA) || (symbol->symbology == BARCODE_UPCA_CC)) {
-            latch = ustrlen(local_text);
+            latch = (int)ustrlen(local_text);
             for(i = 0; i < ustrlen(local_text); i++) {
                 if (local_text[i] == '+') {
                     latch = i;
@@ -551,8 +551,8 @@ int emf_plot(struct zint_symbol *symbol) {
         }
 
         if ((symbol->symbology == BARCODE_UPCE) || (symbol->symbology == BARCODE_UPCE_CC)) {
-            latch = ustrlen(local_text);
-            for(i = 0; i < ustrlen(local_text); i++) {
+            latch = (int)ustrlen(local_text);
+            for(i = 0; i < (int)ustrlen(local_text); i++) {
                 if (local_text[i] == '+') {
                     latch = i;
                 }
@@ -591,11 +591,11 @@ int emf_plot(struct zint_symbol *symbol) {
             }
         }
 
-        emr_exttextoutw[0].w_emr_text.chars = ustrlen(local_text);
-        emr_exttextoutw[0].size = 76 + (6 * bump_up(ustrlen(local_text) + 1));
-        emr_exttextoutw[0].w_emr_text.reference.x = (emr_header.emf_header.bounds.right - (ustrlen(local_text) * 5.3 * scaler)) / 2; // text left
-        emr_exttextoutw[0].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (9 * scaler); // text top
-        emr_exttextoutw[0].w_emr_text.off_dx = 76 + (2 * bump_up(ustrlen(local_text) + 1));
+        emr_exttextoutw[0].w_emr_text.chars = (uint32_t)ustrlen(local_text);
+        emr_exttextoutw[0].size = 76 + (uint32_t)(6 * bump_up(ustrlen(local_text) + 1));
+        emr_exttextoutw[0].w_emr_text.reference.x = (int32_t)((emr_header.emf_header.bounds.right - (ustrlen(local_text) * 5.3 * scaler)) / 2); // text left
+        emr_exttextoutw[0].w_emr_text.reference.y = (int32_t)(emr_header.emf_header.bounds.bottom - (9 * scaler)); // text top
+        emr_exttextoutw[0].w_emr_text.off_dx = (uint32_t)(76 + (2 * bump_up(ustrlen(local_text) + 1)));
         for (i = 0; i < bump_up(ustrlen(local_text) + 1) * 2; i++) {
             string_buffer[i] = '\0';
         }
@@ -603,93 +603,93 @@ int emf_plot(struct zint_symbol *symbol) {
         bytecount += 76 + (6 * bump_up(ustrlen(local_text) + 1));
         recordcount++;
         
-        emr_exttextoutw[1].w_emr_text.chars = ustrlen(regw);
-        emr_exttextoutw[2].w_emr_text.chars = ustrlen(regx);
-        emr_exttextoutw[3].w_emr_text.chars = ustrlen(regy);
-        emr_exttextoutw[4].w_emr_text.chars = ustrlen(regz);
+        emr_exttextoutw[1].w_emr_text.chars = (uint32_t)ustrlen(regw);
+        emr_exttextoutw[2].w_emr_text.chars = (uint32_t)ustrlen(regx);
+        emr_exttextoutw[3].w_emr_text.chars = (uint32_t)ustrlen(regy);
+        emr_exttextoutw[4].w_emr_text.chars = (uint32_t)ustrlen(regz);
         
         if ((symbol->symbology == BARCODE_EANX) || (symbol->symbology == BARCODE_EANX_CC) || (symbol->symbology == BARCODE_ISBNX)) {
             if (latch > 8) {
                 /* EAN-13 */
-                emr_exttextoutw[0].w_emr_text.reference.x = (xoffset - 9) * scaler;
-                emr_exttextoutw[0].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (9 * scaler);;
-                emr_exttextoutw[1].w_emr_text.reference.x = (8 + xoffset) * scaler;
-                emr_exttextoutw[1].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (9 * scaler);;
-                emr_exttextoutw[2].w_emr_text.reference.x = (55 + xoffset) * scaler;
-                emr_exttextoutw[2].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (9 * scaler);;
+                emr_exttextoutw[0].w_emr_text.reference.x = (int32_t)((xoffset - 9) * scaler);
+                emr_exttextoutw[0].w_emr_text.reference.y = (int32_t)(emr_header.emf_header.bounds.bottom - (9 * scaler));
+                emr_exttextoutw[1].w_emr_text.reference.x = (int32_t)((8 + xoffset) * scaler);
+                emr_exttextoutw[1].w_emr_text.reference.y = (int32_t)(emr_header.emf_header.bounds.bottom - (9 * scaler));
+                emr_exttextoutw[2].w_emr_text.reference.x = (int32_t)((55 + xoffset) * scaler);
+                emr_exttextoutw[2].w_emr_text.reference.y = (int32_t)(emr_header.emf_header.bounds.bottom - (9 * scaler));
                 if (ustrlen(regz) > 2) {
-                    emr_exttextoutw[4].w_emr_text.reference.x = (115 + xoffset) * scaler;
+                    emr_exttextoutw[4].w_emr_text.reference.x = (int32_t)((115 + xoffset) * scaler);
                     bytecount += 112;
                     recordcount++;
                 } else if (ustrlen(regz) != 0) {
-                    emr_exttextoutw[4].w_emr_text.reference.x = (109 + xoffset) * scaler;
+                    emr_exttextoutw[4].w_emr_text.reference.x = (int32_t)((109 + xoffset) * scaler);
                     bytecount += 112;
                     recordcount++;
                 }
-                emr_exttextoutw[4].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - ((large_bar_height + 9) * scaler);
+                emr_exttextoutw[4].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (int32_t)(((large_bar_height + 9) * scaler));
                 bytecount += 2 * 112;
                 recordcount += 2;
             } else if (latch > 5) {
                 /* EAN-8 */
-                emr_exttextoutw[0].w_emr_text.reference.x = (7 + xoffset) * scaler;
-                emr_exttextoutw[0].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (9 * scaler);;
-                emr_exttextoutw[1].w_emr_text.reference.x = (40 + xoffset) * scaler;
-                emr_exttextoutw[1].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (9 * scaler);;
+                emr_exttextoutw[0].w_emr_text.reference.x = (int32_t)((7 + xoffset) * scaler);
+                emr_exttextoutw[0].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (int32_t)(9 * scaler);
+                emr_exttextoutw[1].w_emr_text.reference.x = (int32_t)((40 + xoffset) * scaler);
+                emr_exttextoutw[1].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (int32_t)(9 * scaler);
                 if (ustrlen(regz) > 2) {
-                    emr_exttextoutw[4].w_emr_text.reference.x = (87 + xoffset) * scaler;
+                    emr_exttextoutw[4].w_emr_text.reference.x = (int32_t)((87 + xoffset) * scaler);
                     bytecount += 112;
                     recordcount++;
                 } else if (ustrlen(regz) != 0) {
-                    emr_exttextoutw[4].w_emr_text.reference.x = (81 + xoffset) * scaler;
+                    emr_exttextoutw[4].w_emr_text.reference.x = (int32_t)((81 + xoffset) * scaler);
                     bytecount += 112;
                     recordcount++;
                 }
-                emr_exttextoutw[4].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - ((large_bar_height + 9) * scaler);
+                emr_exttextoutw[4].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (int32_t)((large_bar_height + 9) * scaler);
                 bytecount += 112;
                 recordcount++;
             }
         }
 
         if ((symbol->symbology == BARCODE_UPCA) || (symbol->symbology == BARCODE_UPCA_CC)) {
-            emr_exttextoutw[0].w_emr_text.reference.x = (xoffset - 7) * scaler;
-            emr_exttextoutw[0].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (9 * scaler);;
-            emr_exttextoutw[1].w_emr_text.reference.x = (14 + xoffset) * scaler;
-            emr_exttextoutw[1].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (9 * scaler);;
-            emr_exttextoutw[2].w_emr_text.reference.x = (55 + xoffset) * scaler;
-            emr_exttextoutw[2].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (9 * scaler);;
-            emr_exttextoutw[3].w_emr_text.reference.x = (98 + xoffset) * scaler;
-            emr_exttextoutw[3].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (9 * scaler);;
+            emr_exttextoutw[0].w_emr_text.reference.x = (int32_t)((xoffset - 7) * scaler);
+            emr_exttextoutw[0].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (int32_t)(9 * scaler);
+            emr_exttextoutw[1].w_emr_text.reference.x = (int32_t)((14 + xoffset) * scaler);
+            emr_exttextoutw[1].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (int32_t)(9 * scaler);
+            emr_exttextoutw[2].w_emr_text.reference.x = (int32_t)((55 + xoffset) * scaler);
+            emr_exttextoutw[2].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (int32_t)(9 * scaler);
+            emr_exttextoutw[3].w_emr_text.reference.x = (int32_t)((98 + xoffset) * scaler);
+            emr_exttextoutw[3].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (int32_t)(9 * scaler);
             if (ustrlen(regz) > 2) {
-                emr_exttextoutw[4].w_emr_text.reference.x = (117 + xoffset) * scaler;
+                emr_exttextoutw[4].w_emr_text.reference.x = (int32_t)((117 + xoffset) * scaler);
                 bytecount += 112;
                 recordcount++;
             } else if (ustrlen(regz) != 0) {
-                emr_exttextoutw[4].w_emr_text.reference.x = (111 + xoffset) * scaler;
+                emr_exttextoutw[4].w_emr_text.reference.x = (int32_t)((111 + xoffset) * scaler);
                 bytecount += 112;
                 recordcount++;
             }
-            emr_exttextoutw[4].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - ((large_bar_height + 9) * scaler);
+            emr_exttextoutw[4].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (int32_t)((large_bar_height + 9) * scaler);
             bytecount += (3 * 112) + 12;
             recordcount += 4;
         }
         
         if ((symbol->symbology == BARCODE_UPCE) || (symbol->symbology == BARCODE_UPCE_CC)) {
-            emr_exttextoutw[0].w_emr_text.reference.x = (xoffset - 7) * scaler;
-            emr_exttextoutw[0].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (9 * scaler);;
-            emr_exttextoutw[1].w_emr_text.reference.x = (8 + xoffset) * scaler;
-            emr_exttextoutw[1].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (9 * scaler);;
-            emr_exttextoutw[2].w_emr_text.reference.x = (53 + xoffset) * scaler;
-            emr_exttextoutw[2].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (9 * scaler);;
+            emr_exttextoutw[0].w_emr_text.reference.x = (int32_t)((xoffset - 7) * scaler);
+            emr_exttextoutw[0].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (int32_t)(9 * scaler);
+            emr_exttextoutw[1].w_emr_text.reference.x = (int32_t)((8 + xoffset) * scaler);
+            emr_exttextoutw[1].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (int32_t)(9 * scaler);
+            emr_exttextoutw[2].w_emr_text.reference.x = (int32_t)((53 + xoffset) * scaler);
+            emr_exttextoutw[2].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (int32_t)(9 * scaler);
             if (ustrlen(regz) > 2) {
-                emr_exttextoutw[4].w_emr_text.reference.x = (71 + xoffset) * scaler;
+                emr_exttextoutw[4].w_emr_text.reference.x = (int32_t)((71 + xoffset) * scaler);
                 bytecount += 112;
                 recordcount++;
             } else if (ustrlen(regz) != 0) {
-                emr_exttextoutw[4].w_emr_text.reference.x = (65 + xoffset) * scaler;
+                emr_exttextoutw[4].w_emr_text.reference.x = (int32_t)((65 + xoffset) * scaler);
                 bytecount += 112;
                 recordcount++;
             }
-            emr_exttextoutw[4].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - ((large_bar_height + 9) * scaler);
+            emr_exttextoutw[4].w_emr_text.reference.y = emr_header.emf_header.bounds.bottom - (int32_t)((large_bar_height + 9) * scaler);
             bytecount += (2 * 112) + 12;
             recordcount += 3;
         }
@@ -710,18 +710,18 @@ int emf_plot(struct zint_symbol *symbol) {
         box.top.type = 0x0000002b; // EMR_RECTANGLE;
         box.top.size = 24;
         box.top.box.top = 0;
-        box.top.box.bottom = symbol->border_width * scaler;
-        box.top.box.left = symbol->border_width * scaler;
-        box.top.box.right = emr_header.emf_header.bounds.right - (symbol->border_width * scaler);
+        box.top.box.bottom =    (int32_t)(symbol->border_width * scaler);
+        box.top.box.left =      (int32_t)(symbol->border_width * scaler);
+        box.top.box.right =     emr_header.emf_header.bounds.right - (int32_t)(symbol->border_width * scaler);
         bytecount += 24;
         recordcount++;
         
         box.bottom.type = 0x0000002b; // EMR_RECTANGLE;
         box.bottom.size = 24;
-        box.bottom.box.top = emr_header.emf_header.bounds.bottom - ((symbol->border_width + textoffset) * scaler);
-        box.bottom.box.bottom = emr_header.emf_header.bounds.bottom - (textoffset * scaler);
-        box.bottom.box.left = symbol->border_width * scaler;
-        box.bottom.box.right = emr_header.emf_header.bounds.right - (symbol->border_width * scaler);
+        box.bottom.box.top = emr_header.emf_header.bounds.bottom - (int32_t)((symbol->border_width + textoffset) * scaler);
+        box.bottom.box.bottom = emr_header.emf_header.bounds.bottom - (int32_t)(textoffset * scaler);
+        box.bottom.box.left = (int32_t)(symbol->border_width * scaler);
+        box.bottom.box.right = emr_header.emf_header.bounds.right - (int32_t)(symbol->border_width * scaler);
         bytecount += 24;
         recordcount++;
         
@@ -729,17 +729,17 @@ int emf_plot(struct zint_symbol *symbol) {
             box.left.type = 0x0000002b; // EMR_RECTANGLE;
             box.left.size = 24;
             box.left.box.top = 0;
-            box.left.box.bottom = emr_header.emf_header.bounds.bottom - (textoffset * scaler);
+            box.left.box.bottom = emr_header.emf_header.bounds.bottom - (int32_t)(textoffset * scaler);
             box.left.box.left = 0;
-            box.left.box.right = symbol->border_width * scaler;
+            box.left.box.right = (int32_t)(symbol->border_width * scaler);
             bytecount += 24;
             recordcount++;
             
             box.right.type = 0x0000002b; // EMR_RECTANGLE;
             box.right.size = 24;
             box.right.box.top = 0;
-            box.right.box.bottom = emr_header.emf_header.bounds.bottom - (textoffset * scaler);
-            box.right.box.left = emr_header.emf_header.bounds.right - (symbol->border_width * scaler);
+            box.right.box.bottom = emr_header.emf_header.bounds.bottom - (int32_t)(textoffset * scaler);
+            box.right.box.left = emr_header.emf_header.bounds.right - (int32_t)(symbol->border_width * scaler);
             box.right.box.right = emr_header.emf_header.bounds.right;
             bytecount += 24;
             recordcount++;
@@ -752,7 +752,7 @@ int emf_plot(struct zint_symbol *symbol) {
         if (symbol->row_height[this_row] == 0) {
             row_height = large_bar_height;
         } else {
-            row_height = symbol->row_height[this_row];
+            row_height = (float)(symbol->row_height[this_row]);
         }
         row_posn = 0;
         for (i = 0; i < this_row; i++) {
@@ -771,10 +771,10 @@ int emf_plot(struct zint_symbol *symbol) {
                     if(module_is_set(symbol, this_row, i)) {
                         circle[this_circle].type = 0x0000002a; // EMR_ELLIPSE
                         circle[this_circle].size = 24;
-                        circle[this_circle].box.top = this_row * scaler;
-                        circle[this_circle].box.bottom = (this_row + 1) * scaler;
-                        circle[this_circle].box.left = (i + xoffset) * scaler;
-                        circle[this_circle].box.right = (i + xoffset + 1) * scaler;
+                        circle[this_circle].box.top     = (int32_t)(this_row * scaler);
+                        circle[this_circle].box.bottom  = (int32_t)((this_row + 1) * scaler);
+                        circle[this_circle].box.left    = (int32_t)((i + xoffset) * scaler);
+                        circle[this_circle].box.right   = (int32_t)((i + xoffset + 1) * scaler);
                         this_circle++;
                         bytecount += 24;
                         recordcount++;
@@ -799,10 +799,10 @@ int emf_plot(struct zint_symbol *symbol) {
                         /* a bar */
                         rectangle[this_rectangle].type = 0x0000002b; // EMR_RECTANGLE;
                         rectangle[this_rectangle].size = 24;
-                        rectangle[this_rectangle].box.top = row_posn * scaler;
-                        rectangle[this_rectangle].box.bottom = (row_posn + row_height) * scaler;
-                        rectangle[this_rectangle].box.left = (i + xoffset) * scaler;
-                        rectangle[this_rectangle].box.right = (i + xoffset + block_width) * scaler;
+                        rectangle[this_rectangle].box.top       = (int32_t)(row_posn * scaler);
+                        rectangle[this_rectangle].box.bottom    = (int32_t)((row_posn + row_height) * scaler);
+                        rectangle[this_rectangle].box.left      = (int32_t)((i + xoffset) * scaler);
+                        rectangle[this_rectangle].box.right     = (int32_t)((i + xoffset + block_width) * scaler);
                         bytecount += 24;
                         recordcount++;
 
@@ -820,13 +820,13 @@ int emf_plot(struct zint_symbol *symbol) {
                                         case 48:
                                         case 92:
                                         case 94:
-                                            rectangle[this_rectangle].box.bottom += (5 * scaler);
+                                            rectangle[this_rectangle].box.bottom += (int32_t)(5 * scaler);
                                             break;
                                     }
                                     if (i > 94) {
                                         /* Add-on */
-                                        rectangle[this_rectangle].box.top += (10 * scaler);
-                                        rectangle[this_rectangle].box.bottom += (5 * scaler);
+                                        rectangle[this_rectangle].box.top       += (int32_t)(10 * scaler);
+                                        rectangle[this_rectangle].box.bottom    += (int32_t)(5 * scaler);
                                     }
                                 } else if (ustrlen(regw) != 0) {
                                         /* EAN-8 */
@@ -837,28 +837,28 @@ int emf_plot(struct zint_symbol *symbol) {
                                             case 34:
                                             case 64:
                                             case 66:
-                                                rectangle[this_rectangle].box.bottom += (5 * scaler);
+                                                rectangle[this_rectangle].box.bottom += (int32_t)(5 * scaler);
                                                 break;
                                         }
                                         if (i > 66) {
                                             /* Add-on */
-                                            rectangle[this_rectangle].box.top += (10 * scaler);
-                                            rectangle[this_rectangle].box.bottom += (5 * scaler);
+                                            rectangle[this_rectangle].box.top       += (int32_t)(10 * scaler);
+                                            rectangle[this_rectangle].box.bottom    += (int32_t)(5 * scaler);
                                         }
                                 }
                             }
                             if (((symbol->symbology == BARCODE_UPCA) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_UPCA_CC)) {
                                 /* guard bar extensions for UPCA */
                                 if (((i >= 0) && (i <= 11)) || ((i >= 85) && (i <= 96))) {
-                                    rectangle[this_rectangle].box.bottom += (5 * scaler);
+                                    rectangle[this_rectangle].box.bottom    += (int32_t)(5 * scaler);
                                 }
                                 if ((i == 46) || (i == 48)) {
-                                    rectangle[this_rectangle].box.bottom += (5 * scaler);
+                                    rectangle[this_rectangle].box.bottom    += (int32_t)(5 * scaler);
                                 }
                                 if (i > 96) {
                                     /* Add-on */
-                                    rectangle[this_rectangle].box.top += (10 * scaler);
-                                    rectangle[this_rectangle].box.bottom += (5 * scaler);
+                                    rectangle[this_rectangle].box.top       += (int32_t)(10 * scaler);
+                                    rectangle[this_rectangle].box.bottom    += (int32_t)(5 * scaler);
                                 }
                             }
                             
@@ -870,13 +870,13 @@ int emf_plot(struct zint_symbol *symbol) {
                                     case 46:
                                     case 48:
                                     case 50:
-                                        rectangle[this_rectangle].box.bottom += (5 * scaler);
+                                        rectangle[this_rectangle].box.bottom += (int32_t)(5 * scaler);
                                         break;
                                 }
                                 if (i > 50) {
                                     /* Add-on */
-                                    rectangle[this_rectangle].box.top += (10 * scaler);
-                                    rectangle[this_rectangle].box.bottom += (5 * scaler);
+                                    rectangle[this_rectangle].box.top       += (int32_t)(10 * scaler);
+                                    rectangle[this_rectangle].box.bottom    += (int32_t)(5 * scaler);
                                 }
                             }
                         }
@@ -901,30 +901,30 @@ int emf_plot(struct zint_symbol *symbol) {
                 bullseye[i].type = 0x0000002a; // EMR_ELLIPSE
                 bullseye[i].size = 24;
             }
-            bullseye[0].box.top = (35.60 - 10.85) * scaler;
-            bullseye[0].box.bottom = (35.60 + 10.85) * scaler;
-            bullseye[0].box.left = (35.76 - 10.85) * scaler;
-            bullseye[0].box.right = (35.76 + 10.85) * scaler;
-            bullseye[1].box.top = (35.60 - 8.97) * scaler;
-            bullseye[1].box.bottom = (35.60 + 8.97) * scaler;
-            bullseye[1].box.left = (35.76 - 8.97) * scaler;
-            bullseye[1].box.right = (35.76 + 8.97) * scaler;
-            bullseye[2].box.top = (35.60 - 7.10) * scaler;
-            bullseye[2].box.bottom = (35.60 + 7.10) * scaler;
-            bullseye[2].box.left = (35.76 - 7.10) * scaler;
-            bullseye[2].box.right = (35.76 + 7.10) * scaler;
-            bullseye[3].box.top = (35.60 - 5.22) * scaler;
-            bullseye[3].box.bottom = (35.60 + 5.22) * scaler;
-            bullseye[3].box.left = (35.76 - 5.22) * scaler;
-            bullseye[3].box.right = (35.76 + 5.22) * scaler;
-            bullseye[4].box.top = (35.60 - 3.31) * scaler;
-            bullseye[4].box.bottom = (35.60 + 3.31) * scaler;
-            bullseye[4].box.left = (35.76 - 3.31) * scaler;
-            bullseye[4].box.right = (35.76 + 3.31) * scaler;
-            bullseye[5].box.top = (35.60 - 1.43) * scaler;
-            bullseye[5].box.bottom = (35.60 + 1.43) * scaler;
-            bullseye[5].box.left = (35.76 - 1.43) * scaler;
-            bullseye[5].box.right = (35.76 + 1.43) * scaler;
+            bullseye[0].box.top =       (int32_t)((35.60 - 10.85) * scaler);
+            bullseye[0].box.bottom =    (int32_t)((35.60 + 10.85) * scaler);
+            bullseye[0].box.left =      (int32_t)((35.76 - 10.85) * scaler);
+            bullseye[0].box.right =     (int32_t)((35.76 + 10.85) * scaler);
+            bullseye[1].box.top =       (int32_t)((35.60 - 8.97) * scaler);
+            bullseye[1].box.bottom =    (int32_t)((35.60 + 8.97) * scaler);
+            bullseye[1].box.left =      (int32_t)((35.76 - 8.97) * scaler);
+            bullseye[1].box.right =     (int32_t)((35.76 + 8.97) * scaler);
+            bullseye[2].box.top =       (int32_t)((35.60 - 7.10) * scaler);
+            bullseye[2].box.bottom =    (int32_t)((35.60 + 7.10) * scaler);
+            bullseye[2].box.left =      (int32_t)((35.76 - 7.10) * scaler);
+            bullseye[2].box.right =     (int32_t)((35.76 + 7.10) * scaler);
+            bullseye[3].box.top =       (int32_t)((35.60 - 5.22) * scaler);
+            bullseye[3].box.bottom =    (int32_t)((35.60 + 5.22) * scaler);
+            bullseye[3].box.left =      (int32_t)((35.76 - 5.22) * scaler);
+            bullseye[3].box.right =     (int32_t)((35.76 + 5.22) * scaler);
+            bullseye[4].box.top =       (int32_t)((35.60 - 3.31) * scaler);
+            bullseye[4].box.bottom =    (int32_t)((35.60 + 3.31) * scaler);
+            bullseye[4].box.left =      (int32_t)((35.76 - 3.31) * scaler);
+            bullseye[4].box.right =     (int32_t)((35.76 + 3.31) * scaler);
+            bullseye[5].box.top =       (int32_t)((35.60 - 1.43) * scaler);
+            bullseye[5].box.bottom =    (int32_t)((35.60 + 1.43) * scaler);
+            bullseye[5].box.left =      (int32_t)((35.76 - 1.43) * scaler);
+            bullseye[5].box.right =     (int32_t)((35.76 + 1.43) * scaler);
             
             /* Plot hexagons */
             for(i = 0; i < symbol->width; i++) {
@@ -933,37 +933,37 @@ int emf_plot(struct zint_symbol *symbol) {
                     hexagon[this_hexagon].size = 76;
                     hexagon[this_hexagon].count = 6;
                     
-                    my = this_row * 2.135 + 1.43;
-                    ay = my + 1.0 + yoffset;
-                    by = my + 0.5 + yoffset;
-                    cy = my - 0.5 + yoffset;
-                    dy = my - 1.0 + yoffset;
-                    ey = my - 0.5 + yoffset;
-                    fy = my + 0.5 + yoffset;
+                    my = this_row * 2.135f + 1.43f;
+                    ay = my + 1.0f + yoffset;
+                    by = my + 0.5f + yoffset;
+                    cy = my - 0.5f + yoffset;
+                    dy = my - 1.0f + yoffset;
+                    ey = my - 0.5f + yoffset;
+                    fy = my + 0.5f + yoffset;
                     if (this_row & 1) {
-                        mx = (2.46 * i) + 1.23 + 1.23;
+                        mx = (2.46f * i) + 1.23f + 1.23f;
                     } else {
-                        mx = (2.46 * i) + 1.23;
+                        mx = (2.46f * i) + 1.23f;
                     }
                     ax = mx + xoffset;
-                    bx = mx + 0.86 + xoffset;
-                    cx = mx + 0.86 + xoffset;
+                    bx = mx + 0.86f + xoffset;
+                    cx = mx + 0.86f + xoffset;
                     dx = mx + xoffset;
-                    ex = mx - 0.86 + xoffset;
-                    fx = mx - 0.86 + xoffset;
+                    ex = mx - 0.86f + xoffset;
+                    fx = mx - 0.86f + xoffset;
                     
-                    hexagon[this_hexagon].a_points_a.x = ax * scaler;
-                    hexagon[this_hexagon].a_points_a.y = ay * scaler;
-                    hexagon[this_hexagon].a_points_b.x = bx * scaler;
-                    hexagon[this_hexagon].a_points_b.y = by * scaler;
-                    hexagon[this_hexagon].a_points_c.x = cx * scaler;
-                    hexagon[this_hexagon].a_points_c.y = cy * scaler;
-                    hexagon[this_hexagon].a_points_d.x = dx * scaler;
-                    hexagon[this_hexagon].a_points_d.y = dy * scaler;
-                    hexagon[this_hexagon].a_points_e.x = ex * scaler;
-                    hexagon[this_hexagon].a_points_e.y = ey * scaler;
-                    hexagon[this_hexagon].a_points_f.x = fx * scaler;
-                    hexagon[this_hexagon].a_points_f.y = fy * scaler;
+                    hexagon[this_hexagon].a_points_a.x = (int32_t)(ax * scaler);
+                    hexagon[this_hexagon].a_points_a.y = (int32_t)(ay * scaler);
+                    hexagon[this_hexagon].a_points_b.x = (int32_t)(bx * scaler);
+                    hexagon[this_hexagon].a_points_b.y = (int32_t)(by * scaler);
+                    hexagon[this_hexagon].a_points_c.x = (int32_t)(cx * scaler);
+                    hexagon[this_hexagon].a_points_c.y = (int32_t)(cy * scaler);
+                    hexagon[this_hexagon].a_points_d.x = (int32_t)(dx * scaler);
+                    hexagon[this_hexagon].a_points_d.y = (int32_t)(dy * scaler);
+                    hexagon[this_hexagon].a_points_e.x = (int32_t)(ex * scaler);
+                    hexagon[this_hexagon].a_points_e.y = (int32_t)(ey * scaler);
+                    hexagon[this_hexagon].a_points_f.x = (int32_t)(fx * scaler);
+                    hexagon[this_hexagon].a_points_f.y = (int32_t)(fy * scaler);
                     
                     hexagon[this_hexagon].bounds.top = hexagon[this_hexagon].a_points_d.y;
                     hexagon[this_hexagon].bounds.bottom = hexagon[this_hexagon].a_points_a.y;
@@ -983,15 +983,15 @@ int emf_plot(struct zint_symbol *symbol) {
             for (i = 1; i < symbol->rows; i++) {
                     row_binding[i - 1].type = 0x0000002b; // EMR_RECTANGLE;
                     row_binding[i - 1].size = 24;
-                    row_binding[i - 1].box.top = ((i * row_height) + yoffset - 1) * scaler;
-                    row_binding[i - 1].box.bottom = row_binding[i - 1].box.top + (2 * scaler);
+                    row_binding[i - 1].box.top      = (int32_t)(((i * row_height) + yoffset - 1) * scaler);
+                    row_binding[i - 1].box.bottom   = row_binding[i - 1].box.top + (int32_t)(2 * scaler);
                     
                     if (symbol->symbology != BARCODE_CODABLOCKF) {
-                        row_binding[i - 1].box.left = xoffset * scaler;
-                        row_binding[i - 1].box.right = emr_header.emf_header.bounds.right - (xoffset * scaler);
+                        row_binding[i - 1].box.left = (int32_t)(xoffset * scaler);
+                        row_binding[i - 1].box.right = emr_header.emf_header.bounds.right - (int32_t)(xoffset * scaler);
                     } else {
-                        row_binding[i - 1].box.left = (xoffset + 11) * scaler;
-                        row_binding[i - 1].box.right = emr_header.emf_header.bounds.right - ((xoffset + 14) * scaler);
+                        row_binding[i - 1].box.left = (int32_t)((xoffset + 11) * scaler);
+                        row_binding[i - 1].box.right = emr_header.emf_header.bounds.right - (int32_t)((xoffset + 14) * scaler);
                     }
                     bytecount += 24;
                     recordcount++;
@@ -1009,8 +1009,8 @@ int emf_plot(struct zint_symbol *symbol) {
     recordcount++;
     
     /* Put final counts in header */
-    emr_header.emf_header.bytes = bytecount;
-    emr_header.emf_header.records = recordcount;
+    emr_header.emf_header.bytes = (uint32_t)bytecount;
+    emr_header.emf_header.records = (uint32_t)recordcount;
     
     /* Send EMF data to file */
     if (symbol->output_options & BARCODE_STDOUT) {

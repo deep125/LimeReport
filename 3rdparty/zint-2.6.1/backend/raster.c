@@ -240,12 +240,12 @@ void draw_circle(char *pixelbuf, int image_width, int image_height, int x0, int 
 
 void draw_bullseye(char *pixelbuf, int image_width, int image_height, int xoffset, int yoffset, int scaler) {
     /* Central bullseye in Maxicode symbols */
-    draw_circle(pixelbuf, image_width, image_height, (int)(14.5 * scaler) + xoffset, (int)(15 * scaler) + yoffset, (int)(4.571 * scaler) + 1, '1');
-    draw_circle(pixelbuf, image_width, image_height, (int)(14.5 * scaler) + xoffset, (int)(15 * scaler) + yoffset, (int)(3.779 * scaler) + 1, '0');
-    draw_circle(pixelbuf, image_width, image_height, (int)(14.5 * scaler) + xoffset, (int)(15 * scaler) + yoffset, (int)(2.988 * scaler) + 1, '1');
-    draw_circle(pixelbuf, image_width, image_height, (int)(14.5 * scaler) + xoffset, (int)(15 * scaler) + yoffset, (int)(2.196 * scaler) + 1, '0');
-    draw_circle(pixelbuf, image_width, image_height, (int)(14.5 * scaler) + xoffset, (int)(15 * scaler) + yoffset, (int)(1.394 * scaler) + 1, '1');
-    draw_circle(pixelbuf, image_width, image_height, (int)(14.5 * scaler) + xoffset, (int)(15 * scaler) + yoffset, (int)(0.602 * scaler) + 1, '0');
+    draw_circle(pixelbuf, image_width, image_height, (int)(14.5 * scaler) + xoffset, (int)(15 * scaler) + yoffset, (4.571f * scaler) + 1, '1');
+    draw_circle(pixelbuf, image_width, image_height, (int)(14.5 * scaler) + xoffset, (int)(15 * scaler) + yoffset, (3.779f * scaler) + 1, '0');
+    draw_circle(pixelbuf, image_width, image_height, (int)(14.5 * scaler) + xoffset, (int)(15 * scaler) + yoffset, (2.988f * scaler) + 1, '1');
+    draw_circle(pixelbuf, image_width, image_height, (int)(14.5 * scaler) + xoffset, (int)(15 * scaler) + yoffset, (2.196f * scaler) + 1, '0');
+    draw_circle(pixelbuf, image_width, image_height, (int)(14.5 * scaler) + xoffset, (int)(15 * scaler) + yoffset, (1.394f * scaler) + 1, '1');
+    draw_circle(pixelbuf, image_width, image_height, (int)(14.5 * scaler) + xoffset, (int)(15 * scaler) + yoffset, (0.602f * scaler) + 1, '0');
 
 }
 
@@ -394,7 +394,7 @@ void draw_string(char *pixbuf, char input_string[], int xposn, int yposn, int te
             break;
     }
 
-    string_length = strlen(input_string);
+    string_length = (int)strlen(input_string);
     string_left_hand = xposn - ((letter_width * string_length) / 2);
 
     for (i = 0; i < string_length; i++) {
@@ -431,32 +431,32 @@ void plot_hexagon(char *scaled_hexagon, int hexagon_size) {
     float start_x, start_y;
     float end_x, end_y;
     
-    x_offset[0] = 0.0;
-    x_offset[1] = 0.86;
-    x_offset[2] = 0.86;
-    x_offset[3] = 0.0;
-    x_offset[4] = -0.86;
-    x_offset[5] = -0.86;
+    x_offset[0] = 0.0f;
+    x_offset[1] = 0.86f;
+    x_offset[2] = 0.86f;
+    x_offset[3] = 0.0f;
+    x_offset[4] = -0.86f;
+    x_offset[5] = -0.86f;
     
-    y_offset[0] = 1.0;
-    y_offset[1] = 0.5;
-    y_offset[2] = -0.5;
-    y_offset[3] = -1.0;
-    y_offset[4] = -0.5;
-    y_offset[5] = 0.5;
+    y_offset[0] = 1.0f;
+    y_offset[1] = 0.5f;
+    y_offset[2] = -0.5f;
+    y_offset[3] = -1.0f;
+    y_offset[4] = -0.5f;
+    y_offset[5] = 0.5f;
     
     /* Plot hexagon outline */
     for (line = 0; line < 5; line++) {
-        start_x = ((float)hexagon_size / 2.0) + (((float)hexagon_size / 2.0) * x_offset[line]);
-        start_y = ((float)hexagon_size / 2.0) + (((float)hexagon_size / 2.0) * y_offset[line]);
-        end_x = ((float)hexagon_size / 2.0) + (((float)hexagon_size / 2.0) * x_offset[line + 1]);
-        end_y = ((float)hexagon_size / 2.0) + (((float)hexagon_size / 2.0) * y_offset[line + 1]);
+        start_x = (hexagon_size / 2.0f) + ((hexagon_size / 2.0f) * x_offset[line]);
+        start_y = (hexagon_size / 2.0f) + ((hexagon_size / 2.0f) * y_offset[line]);
+        end_x =   (hexagon_size / 2.0f) + ((hexagon_size / 2.0f) * x_offset[line + 1]);
+        end_y =   (hexagon_size / 2.0f) + ((hexagon_size / 2.0f) * y_offset[line + 1]);
         plot_hexline(scaled_hexagon, hexagon_size, start_x, start_y, end_x, end_y);
     }
-    start_x = ((float)hexagon_size / 2.0) + (((float)hexagon_size / 2.0) * x_offset[line]);
-    start_y = ((float)hexagon_size / 2.0) + (((float)hexagon_size / 2.0) * y_offset[line]);
-    end_x = ((float)hexagon_size / 2.0) + (((float)hexagon_size / 2.0) * x_offset[0]);
-    end_y = ((float)hexagon_size / 2.0) + (((float)hexagon_size / 2.0) * y_offset[0]);
+    start_x = (hexagon_size / 2.0f) + ((hexagon_size / 2.0f) * x_offset[line]);
+    start_y = (hexagon_size / 2.0f) + ((hexagon_size / 2.0f) * y_offset[line]);
+    end_x =   (hexagon_size / 2.0f) + ((hexagon_size / 2.0f) * x_offset[0]);
+    end_y =   (hexagon_size / 2.0f) + ((hexagon_size / 2.0f) * y_offset[0]);
     plot_hexline(scaled_hexagon, hexagon_size, start_x, start_y, end_x, end_y);
     
     /* Fill hexagon */
@@ -491,8 +491,8 @@ int plot_raster_maxicode(struct zint_symbol *symbol, int rotate_angle, int data_
 
     xoffset = symbol->border_width + symbol->whitespace_width;
     yoffset = symbol->border_width;
-    image_width = (300 + (2 * xoffset * 2)) * scaler;
-    image_height = (300 + (2 * yoffset * 2)) * scaler;
+    image_width =  (int)((300 + (2 * xoffset * 2)) * scaler);
+    image_height = (int)((300 + (2 * yoffset * 2)) * scaler);
 
     if (!(pixelbuf = (char *) malloc(image_width * image_height))) {
         strcpy(symbol->errtxt, "655: Insufficient memory for pixel buffer");
@@ -518,7 +518,7 @@ int plot_raster_maxicode(struct zint_symbol *symbol, int rotate_angle, int data_
     
     plot_hexagon(scaled_hexagon, hexagon_size);
 
-    draw_bullseye(pixelbuf, image_width, image_height, (2 * xoffset), (2 * yoffset), scaler * 10);
+    draw_bullseye(pixelbuf, image_width, image_height, (2 * xoffset), (2 * yoffset), (int)(scaler * 10));
 
     for (row = 0; row < symbol->rows; row++) {
         yposn = row * 9;
@@ -528,10 +528,10 @@ int plot_raster_maxicode(struct zint_symbol *symbol, int rotate_angle, int data_
                 if (row & 1) {
                     /* Odd (reduced) row */
                     xposn += 5;
-                    draw_hexagon(pixelbuf, image_width, scaled_hexagon, hexagon_size, (xposn + (2 * xoffset)) * scaler, (yposn + (2 * yoffset)) * scaler);
+                    draw_hexagon(pixelbuf, image_width, scaled_hexagon, hexagon_size, (int)((xposn + (2 * xoffset)) * scaler), (int)((yposn + (2 * yoffset)) * scaler));
                 } else {
                     /* Even (full) row */
-                    draw_hexagon(pixelbuf, image_width, scaled_hexagon, hexagon_size, (xposn + (2 * xoffset)) * scaler, (yposn + (2 * yoffset)) * scaler);
+                    draw_hexagon(pixelbuf, image_width, scaled_hexagon, hexagon_size, (int)((xposn + (2 * xoffset)) * scaler), (int)((yposn + (2 * yoffset)) * scaler));
                 }
             }
         }
@@ -557,7 +557,7 @@ int plot_raster_maxicode(struct zint_symbol *symbol, int rotate_angle, int data_
 
 /* Convert UTF-8 to Latin1 Codepage for the interpretation line */
 void to_latin1(unsigned char source[], unsigned char preprocessed[]) {
-    int j, i, input_length;
+    size_t j, i, input_length;
 
     input_length = ustrlen(source);
 
@@ -612,8 +612,8 @@ int plot_raster_dotty(struct zint_symbol *symbol, int rotate_angle, int data_typ
     if (scaler < 2.0) {
         scaler = 2.0;
     }
-    scale_width = (image_width * scaler) + 1;
-    scale_height = (image_height * scaler) + 1;
+    scale_width = (int)(image_width * scaler) + 1;
+    scale_height = (int)(image_height * scaler) + 1;
 
     /* Apply scale options by creating another pixel buffer */
     if (!(scaled_pixelbuf = (char *) malloc(scale_width * scale_height))) {
@@ -630,9 +630,9 @@ int plot_raster_dotty(struct zint_symbol *symbol, int rotate_angle, int data_typ
         for (i = 0; i < symbol->width; i++) {
             if (module_is_set(symbol, r, i)) {
                 draw_circle(scaled_pixelbuf, scale_width, scale_height,
-                        (int) ((i + xoffset) * scaler) + (scaler / 2.0),
-                        (int) ((r + yoffset) * scaler) + (scaler / 2.0),
-                        (symbol->dot_size / 2.0) * scaler,
+                        (int) ((i + xoffset) * scaler + (scaler / 2.0)),
+                        (int) ((r + yoffset) * scaler + (scaler / 2.0)),
+                        (symbol->dot_size / 2.0f) * scaler,
                         '1');
             }
         }
@@ -723,7 +723,7 @@ int plot_raster_default(struct zint_symbol *symbol, int rotate_angle, int data_t
     }
 
     if (large_bar_count == 0) {
-        symbol->height = preset_height;
+        symbol->height = (int)preset_height;
         large_bar_height = 10;
     } else {
         large_bar_height = (symbol->height - preset_height) / large_bar_count;
@@ -806,7 +806,7 @@ int plot_raster_default(struct zint_symbol *symbol, int rotate_angle, int data_t
         default_text_posn = image_height - 17 - symbol->border_width - symbol->border_width;
     }
 
-    row_posn = textoffset + yoffset;
+    row_posn = (float)(textoffset + yoffset);
     next_yposn = textoffset + yoffset;
     row_height = 0;
 
@@ -818,7 +818,7 @@ int plot_raster_default(struct zint_symbol *symbol, int rotate_angle, int data_t
         if (symbol->row_height[this_row] == 0) {
             row_height = large_bar_height;
         } else {
-            row_height = symbol->row_height[this_row];
+            row_height = (float) symbol->row_height[this_row];
         }
         next_yposn = (int) (row_posn + row_height);
         plot_height = next_yposn - plot_yposn;
@@ -838,7 +838,7 @@ int plot_raster_default(struct zint_symbol *symbol, int rotate_angle, int data_t
             if ((addon_latch == 0) && (r == 0) && (i > main_width)) {
                 plot_height = (int) (row_height - 5.0);
                 plot_yposn = (int) (row_posn - 5.0);
-                addon_text_posn = row_posn + row_height - 8.0;
+                addon_text_posn = row_posn + row_height - 8.0f;
                 addon_latch = 1;
             }
             if (latch == 1) {
@@ -885,11 +885,11 @@ int plot_raster_default(struct zint_symbol *symbol, int rotate_angle, int data_t
                 switch (strlen(addon)) {
                     case 2:
                         textpos = 2 * (xoffset + 86);
-                        draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, textflags, image_width, image_height);
+                        draw_string(pixelbuf, addon, textpos, image_height - (int)(addon_text_posn * 2) - 13, textflags, image_width, image_height);
                         break;
                     case 5:
                         textpos = 2 * (xoffset + 100);
-                        draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, textflags, image_width, image_height);
+                        draw_string(pixelbuf, addon, textpos, image_height - (int)(addon_text_posn * 2) - 13, textflags, image_width, image_height);
                         break;
                 }
 
@@ -924,11 +924,11 @@ int plot_raster_default(struct zint_symbol *symbol, int rotate_angle, int data_t
                 switch (strlen(addon)) {
                     case 2:
                         textpos = 2 * (xoffset + 114);
-                        draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, textflags, image_width, image_height);
+                        draw_string(pixelbuf, addon, textpos, image_height - (int)(addon_text_posn * 2) - 13, textflags, image_width, image_height);
                         break;
                     case 5:
                         textpos = 2 * (xoffset + 128);
-                        draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, textflags, image_width, image_height);
+                        draw_string(pixelbuf, addon, textpos, image_height - (int)(addon_text_posn * 2) - 13, textflags, image_width, image_height);
                         break;
                 }
                 break;
@@ -999,11 +999,11 @@ int plot_raster_default(struct zint_symbol *symbol, int rotate_angle, int data_t
         switch (strlen(addon)) {
             case 2:
                 textpos = 2 * (xoffset + 116);
-                draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, textflags, image_width, image_height);
+                draw_string(pixelbuf, addon, textpos, image_height - (int)(addon_text_posn * 2) - 13, textflags, image_width, image_height);
                 break;
             case 5:
                 textpos = 2 * (xoffset + 130);
-                draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, textflags, image_width, image_height);
+                draw_string(pixelbuf, addon, textpos, image_height - (int)(addon_text_posn * 2) - 13, textflags, image_width, image_height);
                 break;
         }
 
@@ -1035,11 +1035,11 @@ int plot_raster_default(struct zint_symbol *symbol, int rotate_angle, int data_t
         switch (strlen(addon)) {
             case 2:
                 textpos = 2 * (xoffset + 70);
-                draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, textflags, image_width, image_height);
+                draw_string(pixelbuf, addon, textpos, image_height - (int)(addon_text_posn * 2) - 13, textflags, image_width, image_height);
                 break;
             case 5:
                 textpos = 2 * (xoffset + 84);
-                draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, textflags, image_width, image_height);
+                draw_string(pixelbuf, addon, textpos, image_height - (int)(addon_text_posn * 2) - 13, textflags, image_width, image_height);
                 break;
         }
 
@@ -1062,11 +1062,11 @@ int plot_raster_default(struct zint_symbol *symbol, int rotate_angle, int data_t
                 /* row binding */
                 if (symbol->symbology != BARCODE_CODABLOCKF) {
                     for (r = 1; r < symbol->rows; r++) {
-                        draw_bar(pixelbuf, xoffset * 2, symbol->width * 2, ((r * row_height) + textoffset + yoffset - 1) * 2, 2 * 2, image_width, image_height);
+                        draw_bar(pixelbuf, xoffset * 2, symbol->width * 2, ((int)(r * row_height) + textoffset + yoffset - 1) * 2, 2 * 2, image_width, image_height);
                     }
                 } else {
                     for (r = 1; r < symbol->rows; r++) {
-                        draw_bar(pixelbuf, (xoffset + 11) * 2 , (symbol->width - 25) * 2, ((r * row_height) + textoffset + yoffset - 1) * 2, 2 * 2, image_width, image_height);
+                        draw_bar(pixelbuf, (xoffset + 11) * 2 , (symbol->width - 25) * 2, ((int)(r * row_height) + textoffset + yoffset - 1) * 2, 2 * 2, image_width, image_height);
                     }
                 }
             }
@@ -1089,8 +1089,8 @@ int plot_raster_default(struct zint_symbol *symbol, int rotate_angle, int data_t
     if (scaler == 0) {
         scaler = 0.5;
     }
-    scale_width = image_width * scaler;
-    scale_height = image_height * scaler;
+    scale_width  = (int)(image_width * scaler);
+    scale_height = (int)(image_height * scaler);
 
     /* Apply scale options by creating another pixel buffer */
     if (!(scaled_pixelbuf = (char *) malloc(scale_width * scale_height))) {

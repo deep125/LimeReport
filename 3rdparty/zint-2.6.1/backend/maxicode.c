@@ -120,7 +120,7 @@ void maxi_bump(int set[], int character[], int bump_posn) {
 }
 
 /* Format text according to Appendix A */
-int maxi_text_process(int mode, unsigned char source[], int length, int eci) {
+int maxi_text_process(int mode, unsigned char source[], size_t length, int eci) {
     /* This code doesn't make use of [Lock in C], [Lock in D]
     and [Lock in E] and so is not always the most efficient at
     compressing data, but should suffice for most applications */
@@ -304,7 +304,7 @@ int maxi_text_process(int mode, unsigned char source[], int length, int eci) {
         }
     }
 
-    for (i = length; i < 144; i++) {
+    for (i = (int)length; i < 144; i++) {
         /* Add the padding */
         if (set[length - 1] == 2) {
             set[i] = 2;
@@ -559,7 +559,7 @@ void maxi_do_primary_2(char postcode[], int country, int service) {
 
 /* Format structured primary for Mode 3 */
 void maxi_do_primary_3(char postcode[], int country, int service) {
-    int i, h;
+    size_t i, h;
 
     h = strlen(postcode);
     to_upper((unsigned char*) postcode);
@@ -588,8 +588,9 @@ void maxi_do_primary_3(char postcode[], int country, int service) {
     maxi_codeword[9] = ((service & 0x3f0) >> 4);
 }
 
-int maxicode(struct zint_symbol *symbol, unsigned char local_source[], int length) {
-    int i, j, block, bit, mode, countrycode = 0, service = 0, lp = 0;
+int maxicode(struct zint_symbol *symbol, unsigned char local_source[], size_t length) {
+    int  j, block, bit, mode, countrycode = 0, service = 0, err;
+    size_t i, lp = 0;
     int bit_pattern[7], internal_error = 0, eclen;
     char postcode[12], countrystr[4], servicestr[4];
 
@@ -672,10 +673,10 @@ int maxicode(struct zint_symbol *symbol, unsigned char local_source[], int lengt
         maxi_codeword[0] = mode;
     }
 
-    i = maxi_text_process(mode, local_source, length, symbol->eci);
-    if (i == ZINT_ERROR_TOO_LONG) {
+    err = maxi_text_process(mode, local_source, length, symbol->eci);
+    if (err == ZINT_ERROR_TOO_LONG) {
         strcpy(symbol->errtxt, "553: Input data too long");
-        return i;
+        return err;
     }
 
     /* All the data is sorted - now do error correction */
@@ -705,7 +706,7 @@ int maxicode(struct zint_symbol *symbol, unsigned char local_source[], int lengt
                 bit_pattern[5] = (maxi_codeword[block - 1] & 0x1);
 
                 if (bit_pattern[bit] != 0) {
-                    set_module(symbol, i, j);
+                    set_module(symbol, (int)i, j);
                 }
             }
         }

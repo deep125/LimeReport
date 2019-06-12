@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include "common.h"
 
-extern int c39(struct zint_symbol *symbol, unsigned char source[], const size_t length);
+extern int c39(struct zint_symbol *symbol, unsigned char source[], size_t length);
 /* Codabar table checked against EN 798:1995 */
 
 #define CALCIUM	"0123456789-$:/.+ABCD"
@@ -46,7 +46,7 @@ static const char *CodaTable[20] = {
     "21212111", "11212121", "11221211", "12121121", "11121221", "11122211"
 };
 
-int pharma_one(struct zint_symbol *symbol, unsigned char source[], int length) {
+int pharma_one(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     /* "Pharmacode can represent only a single integer from 3 to 131070. Unlike other
        commonly used one-dimensional barcode schemes, pharmacode does not store the data in a
        form corresponding to the human-readable digits; the number is encoded in binary, rather
@@ -91,7 +91,7 @@ int pharma_one(struct zint_symbol *symbol, unsigned char source[], int length) {
         }
     } while (tester != 0);
 
-    h = strlen(inter) - 1;
+    h = (int)strlen(inter) - 1;
     *dest = '\0';
     for (counter = h; counter >= 0; counter--) {
         if (inter[counter] == 'W') {
@@ -142,7 +142,7 @@ int pharma_two_calc(struct zint_symbol *symbol, unsigned char source[], char des
         }
     } while (tester != 0);
 
-    h = strlen(inter) - 1;
+    h = (int)strlen(inter) - 1;
     for (counter = h; counter >= 0; counter--) {
         dest[h - counter] = inter[counter];
     }
@@ -151,7 +151,7 @@ int pharma_two_calc(struct zint_symbol *symbol, unsigned char source[], char des
     return error_number;
 }
 
-int pharma_two(struct zint_symbol *symbol, unsigned char source[], int length) {
+int pharma_two(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     /* Draws the patterns for two track pharmacode */
     char height_pattern[200];
     unsigned int loopey, h;
@@ -174,7 +174,7 @@ int pharma_two(struct zint_symbol *symbol, unsigned char source[], int length) {
     }
 
     writer = 0;
-    h = strlen(height_pattern);
+    h = (int)strlen(height_pattern);
     for (loopey = 0; loopey < h; loopey++) {
         if ((height_pattern[loopey] == '2') || (height_pattern[loopey] == '3')) {
             set_module(symbol, 0, writer);
@@ -192,9 +192,10 @@ int pharma_two(struct zint_symbol *symbol, unsigned char source[], int length) {
 }
 
 /* The Codabar system consisting of simple substitution */
-int codabar(struct zint_symbol *symbol, unsigned char source[], int length) {
+int codabar(struct zint_symbol *symbol, unsigned char source[], size_t length) {
 
-    int i, error_number;
+    int error_number;
+    size_t i;
     char dest[512];
 
     strcpy(dest, "");
@@ -232,8 +233,9 @@ int codabar(struct zint_symbol *symbol, unsigned char source[], int length) {
 }
 
 /* Italian Pharmacode */
-int code32(struct zint_symbol *symbol, unsigned char source[], int length) {
-    int i, zeroes, error_number, checksum, checkpart, checkdigit;
+int code32(struct zint_symbol *symbol, unsigned char source[], size_t length) {
+    int i, error_number, checksum, checkpart, checkdigit;
+    size_t zeroes;
     char localstr[10], risultante[7];
     long int pharmacode, remainder, devisor;
     int codeword[6];
