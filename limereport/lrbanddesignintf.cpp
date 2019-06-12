@@ -137,6 +137,7 @@ void BandMarker::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void BandMarker::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
+    Q_UNUSED(event);
     m_band->posChanged(m_band, m_band->pos(), m_oldBandPos);
 }
 

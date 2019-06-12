@@ -493,6 +493,7 @@ void BaseDesignIntf::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
 
 void BaseDesignIntf::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event);
     m_hovered = true;
     update();
 }

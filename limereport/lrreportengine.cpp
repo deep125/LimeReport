@@ -551,6 +551,7 @@ void ReportEnginePrivate::previewReport(PreviewHints hints)
 
 void ReportEnginePrivate::previewReport(QPrinter *printer, PreviewHints hints)
 {
+    Q_UNUSED(printer);
     //    QTime start = QTime::currentTime();
         try{
             dataManager()->setDesignTime(false);

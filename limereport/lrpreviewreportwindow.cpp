@@ -503,6 +503,7 @@ void PreviewReportWindow::on_actionShow_Toolbar_triggered()
 
 void PreviewReportWindow::slotCurrentPageChanged(int page)
 {
+    Q_UNUSED(page);
     slotActivateItemSelectionMode();
 }
 
