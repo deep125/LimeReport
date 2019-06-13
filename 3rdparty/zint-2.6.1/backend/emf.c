@@ -221,7 +221,7 @@ int emf_plot(struct zint_symbol *symbol) {
             case BARCODE_UPCE_CC:
                 /* For these symbols use dummy text to ensure formatting is done
                  * properly even if no text is required */
-                for (i = 0; i < ustrlen(symbol->text); i++) {
+                for (i = 0; i < (int)ustrlen(symbol->text); i++) {
                     if (symbol->text[i] == '+') {
                         local_text[i] = '+';
                     } else {
@@ -495,7 +495,7 @@ int emf_plot(struct zint_symbol *symbol) {
 
         if ((symbol->symbology == BARCODE_EANX) || (symbol->symbology == BARCODE_EANX_CC) || (symbol->symbology == BARCODE_ISBNX)) {
             latch = (int)ustrlen(local_text);
-            for(i = 0; i < ustrlen(local_text); i++) {
+            for(i = 0; i < (int)ustrlen(local_text); i++) {
                 if (local_text[i] == '+') {
                     latch = i;
                 }
@@ -506,9 +506,9 @@ int emf_plot(struct zint_symbol *symbol) {
                     regw[i - 1] = local_text[i];
                     regx[i - 1] = local_text[i + 6];
                 }
-                if (ustrlen(local_text) > latch) {
+                if ((int)ustrlen(local_text) > latch) {
                     // With add-on
-                    for (i = (latch + 1); i <= ustrlen(local_text); i++) {
+                    for (i = (latch + 1); i <= (int)ustrlen(local_text); i++) {
                         regz[i - (latch + 1)] = local_text[i];
                     }
                 }
@@ -518,9 +518,9 @@ int emf_plot(struct zint_symbol *symbol) {
                 for(i = 0; i <= 3; i++) {
                     regw[i] = local_text[i + 4];
                 }
-                if (ustrlen(local_text) > latch) {
+                if ((int)ustrlen(local_text) > latch) {
                     // With add-on
-                    for (i = (latch + 1); i <= ustrlen(local_text); i++) {
+                    for (i = (latch + 1); i <= (int)ustrlen(local_text); i++) {
                         regz[i - (latch + 1)] = local_text[i];
                     }
                 }            
@@ -531,14 +531,14 @@ int emf_plot(struct zint_symbol *symbol) {
 
         if ((symbol->symbology == BARCODE_UPCA) || (symbol->symbology == BARCODE_UPCA_CC)) {
             latch = (int)ustrlen(local_text);
-            for(i = 0; i < ustrlen(local_text); i++) {
+            for(i = 0; i < (int)ustrlen(local_text); i++) {
                 if (local_text[i] == '+') {
                     latch = i;
                 }
             }
-            if (ustrlen(local_text) > latch) {
+            if ((int)ustrlen(local_text) > latch) {
                 // With add-on
-                for (i = (latch + 1); i <= ustrlen(local_text); i++) {
+                for (i = (latch + 1); i <= (int)ustrlen(local_text); i++) {
                     regz[i - (latch + 1)] = local_text[i];
                 }
             }
@@ -557,9 +557,9 @@ int emf_plot(struct zint_symbol *symbol) {
                     latch = i;
                 }
             }
-            if (ustrlen(local_text) > latch) {
+            if ((int)ustrlen(local_text) > latch) {
                 // With add-on
-                for (i = (latch + 1); i <= ustrlen(local_text); i++) {
+                for (i = (latch + 1); i <= (int)ustrlen(local_text); i++) {
                     regz[i - (latch + 1)] = local_text[i];
                 }
             }
@@ -596,7 +596,7 @@ int emf_plot(struct zint_symbol *symbol) {
         emr_exttextoutw[0].w_emr_text.reference.x = (int32_t)((emr_header.emf_header.bounds.right - (ustrlen(local_text) * 5.3 * scaler)) / 2); // text left
         emr_exttextoutw[0].w_emr_text.reference.y = (int32_t)(emr_header.emf_header.bounds.bottom - (9 * scaler)); // text top
         emr_exttextoutw[0].w_emr_text.off_dx = (uint32_t)(76 + (2 * bump_up(ustrlen(local_text) + 1)));
-        for (i = 0; i < bump_up(ustrlen(local_text) + 1) * 2; i++) {
+        for (i = 0; i < (int)bump_up(ustrlen(local_text) + 1) * 2; i++) {
             string_buffer[i] = '\0';
         }
         utfle_copy(string_buffer, local_text, ustrlen(local_text));
@@ -1087,7 +1087,7 @@ int emf_plot(struct zint_symbol *symbol) {
                 fwrite(&emr_selectobject_font, sizeof(emr_selectobject_t), 1, emf_file);
                 fwrite(&emr_exttextoutw[0], sizeof(emr_exttextoutw_t), 1, emf_file);
                 fwrite(&string_buffer, 2 * bump_up(ustrlen(local_text) + 1), 1, emf_file);
-                for (i = 0; i < bump_up(ustrlen(local_text) + 1); i++) {
+                for (i = 0; i < (int)bump_up(ustrlen(local_text) + 1); i++) {
                     fwrite(&dx, 4, 1, emf_file);
                 }
                 fwrite(&emr_exttextoutw[1], sizeof(emr_exttextoutw_t), 1, emf_file);
@@ -1116,7 +1116,7 @@ int emf_plot(struct zint_symbol *symbol) {
                 fwrite(&emr_selectobject_font, sizeof(emr_selectobject_t), 1, emf_file);
                 fwrite(&emr_exttextoutw[0], sizeof(emr_exttextoutw_t), 1, emf_file);
                 fwrite(&string_buffer, 2 * bump_up(ustrlen(local_text) + 1), 1, emf_file);
-                for (i = 0; i < bump_up(ustrlen(local_text) + 1); i++) {
+                for (i = 0; i < (int)bump_up(ustrlen(local_text) + 1); i++) {
                     fwrite(&dx, 4, 1, emf_file);
                 }
                 fwrite(&emr_exttextoutw[1], sizeof(emr_exttextoutw_t), 1, emf_file);
@@ -1140,7 +1140,7 @@ int emf_plot(struct zint_symbol *symbol) {
             fwrite(&emr_selectobject_font, sizeof(emr_selectobject_t), 1, emf_file);
             fwrite(&emr_exttextoutw[0], sizeof(emr_exttextoutw_t), 1, emf_file);
             fwrite(&string_buffer, 2 * bump_up(ustrlen(local_text) + 1), 1, emf_file);
-            for (i = 0; i < bump_up(ustrlen(local_text) + 1); i++) {
+            for (i = 0; i < (int)bump_up(ustrlen(local_text) + 1); i++) {
                 fwrite(&dx, 4, 1, emf_file);
             }
             fwrite(&emr_exttextoutw[3], sizeof(emr_exttextoutw_t), 1, emf_file);
@@ -1177,7 +1177,7 @@ int emf_plot(struct zint_symbol *symbol) {
             fwrite(&emr_selectobject_font, sizeof(emr_selectobject_t), 1, emf_file);
             fwrite(&emr_exttextoutw[0], sizeof(emr_exttextoutw_t), 1, emf_file);
             fwrite(&string_buffer, 2 * bump_up(ustrlen(local_text) + 1), 1, emf_file);
-            for (i = 0; i < bump_up(ustrlen(local_text) + 1); i++) {
+            for (i = 0; i < (int)bump_up(ustrlen(local_text) + 1); i++) {
                 fwrite(&dx, 4, 1, emf_file);
             }
             fwrite(&emr_exttextoutw[2], sizeof(emr_exttextoutw_t), 1, emf_file);
@@ -1208,7 +1208,7 @@ int emf_plot(struct zint_symbol *symbol) {
             fwrite(&emr_selectobject_font, sizeof(emr_selectobject_t), 1, emf_file);
             fwrite(&emr_exttextoutw[0], sizeof(emr_exttextoutw_t), 1, emf_file);
             fwrite(&string_buffer, 2 * bump_up(ustrlen(local_text) + 1), 1, emf_file);
-            for (i = 0; i < bump_up(ustrlen(local_text) + 1); i++) {
+            for (i = 0; i < (int)bump_up(ustrlen(local_text) + 1); i++) {
                 fwrite(&dx, 4, 1, emf_file);
             }
         }

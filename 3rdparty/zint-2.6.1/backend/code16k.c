@@ -126,7 +126,7 @@ static void dxsmooth16(unsigned int *indexliste) {
         } else {
             last = FALSE;
         }
-        if (i != *(indexliste) - 1) {
+        if (i != (int)*(indexliste) - 1) {
             next = list[1][i + 1];
         } else {
             next = FALSE;
@@ -339,7 +339,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[], size_t length) {
 
     do {
         list[1][indexliste] = mode;
-        while ((list[1][indexliste] == mode) && (indexchaine < input_length)) {
+        while ((list[1][indexliste] == mode) && (indexchaine < (int)input_length)) {
             list[0][indexliste]++;
             indexchaine++;
             mode = parunmodd(source[indexchaine]);
@@ -348,7 +348,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[], size_t length) {
             } /* FNC1 */
         }
         indexliste++;
-    } while (indexchaine < input_length);
+    } while (indexchaine < (int)input_length);
 
     dxsmooth16(&indexliste);
 

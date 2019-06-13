@@ -681,7 +681,7 @@ int plot_raster_default(struct zint_symbol *symbol, int rotate_angle, int data_t
             case BARCODE_UPCE_CC:
                 /* For these symbols use dummy text to ensure formatting is done
                  * properly even if no text is required */
-                for (i = 0; i < ustrlen(symbol->text); i++) {
+                for (i = 0; i < (int)ustrlen(symbol->text); i++) {
                     if (symbol->text[i] == '+') {
                         local_text[i] = '+';
                     } else {
@@ -768,7 +768,7 @@ int plot_raster_default(struct zint_symbol *symbol, int rotate_angle, int data_t
     r = 0;
     /* Isolate add-on text */
     if (is_extendable(symbol->symbology)) {
-        for (i = 0; i < ustrlen(local_text); i++) {
+        for (i = 0; i < (int)ustrlen(local_text); i++) {
             if (latch == 1) {
                 addon[r] = local_text[i];
                 r++;

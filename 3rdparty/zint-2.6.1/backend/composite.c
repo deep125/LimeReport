@@ -1061,7 +1061,7 @@ static int cc_binary_string(struct zint_symbol *symbol, const char source[], cha
         do {
             ninety[i] = source[i + 2];
             i++;
-        } while ((strlen(source) > i + 2) && ('[' != source[i + 2]));
+        } while (((int)strlen(source) > i + 2) && ('[' != source[i + 2]));
         ninety[i] = '\0';
 
         /* Find out if the AI 90 data is alphabetic or numeric or both */

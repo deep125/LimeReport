@@ -964,7 +964,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     char binary_string[20000], bit_pattern[20045], descriptor[42];
     char adjusted_string[20000];
     unsigned char desc_data[4], desc_ecc[6];
-    int err_code, ecc_level, compact=0, data_length, data_maxsize, codeword_size=0, adjusted_length;
+    int err_code, ecc_level, compact=0, data_length, data_maxsize, codeword_size=10, adjusted_length;
     int remainder, padbits, count, gs1, adjustment_size;
     int debug = symbol->debug, reader = 0;
     int comp_loop = 4;
@@ -1331,12 +1331,12 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], size_t length) {
 #ifndef _MSC_VER
     unsigned int data_part[data_blocks + 3], ecc_part[ecc_blocks + 3];
 #else
-    data_part = (unsigned int*) _alloca((data_blocks + 3) * sizeof (unsigned int));
-    ecc_part = (unsigned int*) _alloca((ecc_blocks + 3) * sizeof (unsigned int));
+    data_part = (unsigned int*) _alloca(((unsigned)data_blocks + 3) * sizeof (unsigned int));
+    ecc_part = (unsigned int*) _alloca(((unsigned)ecc_blocks + 3) * sizeof (unsigned int));
 #endif
     /* Copy across data into separate integers */
-    memset(data_part, 0, (data_blocks + 2) * sizeof (int));
-    memset(ecc_part, 0, (ecc_blocks + 2) * sizeof (int));
+    memset(data_part, 0, ((unsigned)data_blocks + 2) * sizeof (int));
+    memset(ecc_part, 0, ((unsigned)ecc_blocks + 2) * sizeof (int));
 
     /* Split into codewords and calculate reed-solomon error correction codes */
     for (i = 0; i < data_blocks; i++) {
@@ -1365,7 +1365,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], size_t length) {
     rs_init_code(ecc_blocks, 1);
     rs_encode_long(data_blocks, data_part, ecc_part);
     for (i = (ecc_blocks - 1); i >= 0; i--) {
-        bin_append(ecc_part[i], codeword_size, adjusted_string);
+        bin_append(ecc_part[i], (unsigned)codeword_size, adjusted_string);
     }
     rs_free();
     
@@ -1586,14 +1586,14 @@ int aztec_runes(struct zint_symbol *symbol, unsigned char source[], size_t lengt
         return ZINT_ERROR_INVALID_DATA;
     }
     switch (length) {
-        case 3: input_value = 100 * ctoi(source[0]);
-            input_value += 10 * ctoi(source[1]);
-            input_value += ctoi(source[2]);
+        case 3: input_value = 100 * ctoi((char)source[0]);
+            input_value += 10 * ctoi((char)source[1]);
+            input_value += ctoi((char)source[2]);
             break;
-        case 2: input_value = 10 * ctoi(source[0]);
-            input_value += ctoi(source[1]);
+        case 2: input_value = 10 * ctoi((char)source[0]);
+            input_value += ctoi((char)source[1]);
             break;
-        case 1: input_value = ctoi(source[0]);
+        case 1: input_value = ctoi((char)source[0]);
             break;
     }
 
@@ -1603,7 +1603,7 @@ int aztec_runes(struct zint_symbol *symbol, unsigned char source[], size_t lengt
     }
 
     strcpy(binary_string, "");
-    bin_append(input_value, 8, binary_string);
+    bin_append((unsigned)input_value, 8, binary_string);
 
     data_codewords[0] = 0;
     data_codewords[1] = 0;

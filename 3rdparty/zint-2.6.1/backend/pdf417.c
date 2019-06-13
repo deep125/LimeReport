@@ -524,7 +524,7 @@ void numbprocess(int *chainemc, int *mclength, char chaine[], int start, int len
             while (strlen(chainemod) != 0) {
                 nombre *= 10;
                 nombre += ctoi(chainemod[0]);
-                for (loop = 0; loop < strlen(chainemod); loop++) {
+                for (loop = 0; loop < (int)strlen(chainemod); loop++) {
                     chainemod[loop] = chainemod[loop + 1];
                 }
                 if (nombre < diviseur) {
@@ -576,13 +576,13 @@ static int pdf417(struct zint_symbol *symbol, unsigned char chaine[], const size
     /* 463 */
     do {
         liste[1][indexliste] = mode;
-        while ((liste[1][indexliste] == mode) && (indexchaine < length)) {
+        while ((liste[1][indexliste] == mode) && (indexchaine < (int)length)) {
             liste[0][indexliste]++;
             indexchaine++;
             mode = quelmode(chaine[indexchaine]);
         }
         indexliste++;
-    } while (indexchaine < length);
+    } while (indexchaine < (int)length);
 
     /* 474 */
     pdfsmooth(&indexliste);
@@ -811,7 +811,7 @@ static int pdf417(struct zint_symbol *symbol, unsigned char chaine[], const size
             bin_append(0x3FA29, 18, pattern); /* Row Stop */
         }
         
-        for (loop = 0; loop < strlen(pattern); loop++) {
+        for (loop = 0; loop < (int)strlen(pattern); loop++) {
             if (pattern[loop] == '1') {
                 set_module(symbol, i, loop);
             }
@@ -905,13 +905,13 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], size_t leng
     /* 463 */
     do {
         liste[1][indexliste] = mode;
-        while ((liste[1][indexliste] == mode) && (indexchaine < length)) {
+        while ((liste[1][indexliste] == mode) && (indexchaine < (int)length)) {
             liste[0][indexliste]++;
             indexchaine++;
             mode = quelmode(chaine[indexchaine]);
         }
         indexliste++;
-    } while (indexchaine < length);
+    } while (indexchaine < (int)length);
 
     /* 474 */
     pdfsmooth(&indexliste);
@@ -1264,7 +1264,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], size_t leng
         if (debug) printf("%s\n", pattern);
 
         /* so now pattern[] holds the string of '1's and '0's. - copy this to the symbol */
-        for (loop = 0; loop < strlen(pattern); loop++) {
+        for (loop = 0; loop < (int)strlen(pattern); loop++) {
             if (pattern[loop] == '1') {
                 set_module(symbol, i, loop);
             }

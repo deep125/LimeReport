@@ -57,7 +57,7 @@ int bmp_pixel_plot(struct zint_symbol *symbol, char *pixelbuf) {
     if (symbol->bitmap != NULL)
         free(symbol->bitmap);
 
-	row_size = 4 * (int)(floor((24.0 * symbol->bitmap_width + 31) / 32));
+    row_size = 4 * (int)(floor((24.0 * symbol->bitmap_width + 31) / 32));
 	bitmap = (char *) malloc((size_t)(row_size * symbol->bitmap_height));
 
     fgred = (16 * ctoi(symbol->fgcolour[0])) + ctoi(symbol->fgcolour[1]);
@@ -74,21 +74,21 @@ int bmp_pixel_plot(struct zint_symbol *symbol, char *pixelbuf) {
             i = (3 * column) + (row * row_size);
             switch (*(pixelbuf + (symbol->bitmap_width * (symbol->bitmap_height - row - 1)) + column)) {
                 case '1':
-                    bitmap[i] = fgblu;
-                    bitmap[i + 1] = fggrn;
-                    bitmap[i + 2] = fgred;
+                    bitmap[i]       = (char)fgblu;
+                    bitmap[i + 1]   = (char)fggrn;
+                    bitmap[i + 2]   = (char)fgred;
                     break;
                 default:
-                    bitmap[i] = bgblu;
-                    bitmap[i + 1] = bggrn;
-                    bitmap[i + 2] = bgred;
+                    bitmap[i]       = (char)bgblu;
+                    bitmap[i + 1]   = (char)bggrn;
+                    bitmap[i + 2]   = (char)bgred;
                     break;
 
             }
         }
     }
 
-    data_size = symbol->bitmap_height * row_size;
+    data_size = (unsigned)(symbol->bitmap_height * row_size);
     symbol->bitmap_byte_length = data_size;
 
     file_header.header_field = 0x4d42; // "BM"

@@ -177,7 +177,7 @@ static void qr_binary(int datastream[], const int version, const int target_binl
     }
 
     if (debug) {
-        for (i = 0; i < length; i++) {
+        for (i = 0; i < (int)length; i++) {
             printf("%c", mode[i]);
         }
         printf("\n");
@@ -190,7 +190,7 @@ static void qr_binary(int datastream[], const int version, const int target_binl
         short_data_block_length = 0;
         do {
             short_data_block_length++;
-        } while (((short_data_block_length + position) < length)
+        } while (((short_data_block_length + position) < (int)length)
                 && (mode[position + short_data_block_length] == data_block));
 
         switch (data_block) {
@@ -405,7 +405,7 @@ static void qr_binary(int datastream[], const int version, const int target_binl
         }
 
         position += short_data_block_length;
-    } while (position < length);
+    } while (position < (int)length);
 
     /* Terminator */
     strcat(binary, "0000");
@@ -1192,7 +1192,7 @@ static void applyOptimisation(const int version,char inputMode[], const size_t i
     int *blockLength;
     char *blockMode;
 
-    for (i = 0; i < inputLength; i++) {
+    for (i = 0; i < (int)inputLength; i++) {
         if (inputMode[i] != currentMode) {
             currentMode = inputMode[i];
             blockCount++;
@@ -1211,7 +1211,7 @@ static void applyOptimisation(const int version,char inputMode[], const size_t i
 
     j = -1;
     currentMode = ' '; // Null
-    for (i = 0; i < inputLength; i++) {
+    for (i = 0; i < (int)inputLength; i++) {
         if (inputMode[i] != currentMode) {
             j++;
             blockLength[j] = 1;
@@ -1409,7 +1409,7 @@ int qr_code(struct zint_symbol *symbol, const unsigned char source[], size_t len
     gs1 = (symbol->input_mode == GS1_MODE);
 
     if ((symbol->input_mode == DATA_MODE) || (symbol->eci != 3)) {
-        for (i = 0; i < length; i++) {
+        for (i = 0; i < (int)length; i++) {
             jisdata[i] = (int) source[i];
         }
     } else {
@@ -1419,7 +1419,7 @@ int qr_code(struct zint_symbol *symbol, const unsigned char source[], size_t len
             return error_number;
         }
 
-        for (i = 0; i < length; i++) {
+        for (i = 0; i < (int)length; i++) {
             if (utfdata[i] <= 0xff) {
                 jisdata[i] = utfdata[i];
             } else {
@@ -1643,7 +1643,7 @@ static int micro_qr_intermediate(char binary[], const int jisdata[], const char 
     strcpy(binary, "");
 
     if (debug) {
-        for (i = 0; i < length; i++) {
+        for (i = 0; i < (int)length; i++) {
             printf("%c", mode[i]);
         }
         printf("\n");
@@ -1658,7 +1658,7 @@ static int micro_qr_intermediate(char binary[], const int jisdata[], const char 
         short_data_block_length = 0;
         do {
             short_data_block_length++;
-        } while (((short_data_block_length + position) < length) && (mode[position + short_data_block_length] == data_block));
+        } while (((short_data_block_length + position) < (int)length) && (mode[position + short_data_block_length] == data_block));
 
         switch (data_block) {
             case 'K':
@@ -1846,7 +1846,7 @@ static int micro_qr_intermediate(char binary[], const int jisdata[], const char 
         }
 
         position += short_data_block_length;
-    } while (position < length - 1);
+    } while (position < (int)length - 1);
 
     return 0;
 }
@@ -1896,7 +1896,7 @@ static void get_bitlength(int count[],const char stream[]) {
                     break;
             }
         }
-    } while (i < length);
+    } while (i < (int)length);
 }
 
 static void microqr_expand_binary(const char binary_stream[], char full_stream[],const int version) {
@@ -1980,7 +1980,7 @@ static void microqr_expand_binary(const char binary_stream[], char full_stream[]
                 break;
         }
 
-    } while (i < length);
+    } while (i < (int)length);
 }
 
 static void micro_qr_m1(char binary_data[]) {
@@ -2399,7 +2399,7 @@ static void micro_populate_grid(unsigned char* grid,const int size,const char fu
             i++;
         }
 
-        if (i < n) {
+        if (i < (int)n) {
             if (!(grid[(y * size) + x] & 0xf0)) {
                 if (full_stream[i] == '1') {
                     grid[(y * size) + x] = 0x01;
@@ -2427,7 +2427,7 @@ static void micro_populate_grid(unsigned char* grid,const int size,const char fu
             y = size - 1;
             direction = 1;
         }
-    } while (i < n);
+    } while (i < (int)n);
 }
 
 static int micro_evaluate(const unsigned char *grid,const int size,const int pattern) {
@@ -2618,14 +2618,14 @@ int microqr(struct zint_symbol *symbol, const unsigned char source[], size_t len
         }
     }
 
-    if (a_count == length) {
+    if (a_count == (int)length) {
         /* All data can be encoded in Alphanumeric mode */
         for (i = 0; i < length; i++) {
             mode[i] = 'A';
         }
     }
 
-    if (n_count == length) {
+    if (n_count == (int)length) {
         /* All data can be encoded in Numeric mode */
         for (i = 0; i < length; i++) {
             mode[i] = 'N';
@@ -2770,7 +2770,7 @@ int microqr(struct zint_symbol *symbol, const unsigned char source[], size_t len
     grid = (unsigned char *) _alloca((size * size) * sizeof (unsigned char));
 #endif
 
-    for (i = 0; i < size; i++) {
+    for (i = 0; (int)i < size; i++) {
         for (j = 0; j < size; j++) {
             grid[(i * size) + j] = 0;
         }
@@ -2897,7 +2897,7 @@ int upnqr(struct zint_symbol *symbol, const unsigned char source[], size_t lengt
     switch(symbol->input_mode) {
         case DATA_MODE:
             /* Input is already in ISO-8859-2 format */
-            for (i = 0; i < length; i++) {
+            for (i = 0; i < (int)length; i++) {
                 jisdata[i] = (int) source[i];
                 mode[i] = 'B';
             }
@@ -2912,7 +2912,7 @@ int upnqr(struct zint_symbol *symbol, const unsigned char source[], size_t lengt
                 strcpy(symbol->errtxt, "572: Invalid characters in input data");
                 return error_number;
             }
-            for (i = 0; i < length; i++) {
+            for (i = 0; i < (int)length; i++) {
                 jisdata[i] = (int) preprocessed[i];
                 mode[i] = 'B';
             }

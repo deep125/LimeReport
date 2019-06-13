@@ -101,7 +101,7 @@ static int clr_row(char *Dots, const int Hgt, const int Wid, const int y) {
 }
 
 /* Dot pattern scoring routine from Annex A */
-const int score_array(char Dots[], int Hgt, int Wid) {
+static int score_array(char Dots[], int Hgt, int Wid) {
     int x, y, worstedge, first, last, sum;
     int penalty_local = 0;
     int penalty = 0;
@@ -349,7 +349,7 @@ int datum_c(const unsigned char source[], size_t position, size_t length) {
 int n_digits(const unsigned char source[], size_t position, size_t length) {
     size_t i;
 
-    for (i = position; ((source[i] >= '0') && (source[i] <= '9')) && (i < (int)length); i++);
+    for (i = position; ((source[i] >= '0') && (source[i] <= '9')) && (i < length); i++);
 
     return (int)(i - position);
 }
@@ -526,7 +526,7 @@ int dotcode_encode_message(struct zint_symbol *symbol, const unsigned char sourc
     do {
         done = 0;
         /* Step A */
-        if ((input_position == length - 2) && (inside_macro != 0) && (inside_macro != 100)) {
+        if ((input_position == (int)length - 2) && (inside_macro != 0) && (inside_macro != 100)) {
             // inside_macro only gets set to 97, 98 or 99 if the last two characters are RS/EOT
             input_position += 2;
             done = 1;
@@ -535,7 +535,7 @@ int dotcode_encode_message(struct zint_symbol *symbol, const unsigned char sourc
             }
         }
 
-        if ((input_position == length - 1) && (inside_macro == 100)) {
+        if ((input_position == (int)length - 1) && (inside_macro == 100)) {
             // inside_macro only gets set to 100 if the last character is EOT
             input_position++;
             done = 1;
@@ -1038,7 +1038,7 @@ int dotcode_encode_message(struct zint_symbol *symbol, const unsigned char sourc
                 printf("E3 ");
             }
         }
-    } while (input_position < length);
+    } while (input_position < (int)length);
 
     if (encoding_mode == 'X') {
         if (binary_buffer_size != 0) {

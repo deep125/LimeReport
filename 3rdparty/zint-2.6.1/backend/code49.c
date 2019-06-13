@@ -62,7 +62,7 @@ int code_49(struct zint_symbol *symbol, unsigned char source[], size_t length) {
         gs1 = 0;
     }
 
-    for (i = 0; i < length; i++) {
+    for (i = 0; i < (int)length; i++) {
         if (source[i] > 127) {
             strcpy(symbol->errtxt, "431: Invalid characters in input data");
             return ZINT_ERROR_INVALID_DATA;
@@ -178,7 +178,7 @@ int code_49(struct zint_symbol *symbol, unsigned char source[], size_t length) {
                         i += 4;
                         break;
                 }
-                if (i < h) {
+                if (i < (int)h) {
                     /* There is more to add */
                     codewords[codeword_count] = 48; /* Numeric Shift */
                     codeword_count++;
@@ -193,7 +193,7 @@ int code_49(struct zint_symbol *symbol, unsigned char source[], size_t length) {
             codeword_count++;
             i++;
         }
-    } while (i < h);
+    } while (i < (int)h);
 
     switch (codewords[0]) {
             /* Set starting mode value */
@@ -326,7 +326,7 @@ int code_49(struct zint_symbol *symbol, unsigned char source[], size_t length) {
         /* Expand into symbol */
         symbol->row_height[i] = 10;
         
-        for (j = 0; j < strlen(pattern); j++) {
+        for (j = 0; j < (int)strlen(pattern); j++) {
             if (pattern[j] == '1') {
                 set_module(symbol, i, j);
             }

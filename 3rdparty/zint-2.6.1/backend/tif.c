@@ -54,7 +54,7 @@ int tif_pixel_plot(struct zint_symbol *symbol, char *pixelbuf) {
     int fgred, fggrn, fgblu, bgred, bggrn, bgblu;
     int i;
     int rows_per_strip, strip_count;
-    int free_memory;
+    unsigned free_memory;
     int row, column;
     FILE *tif_file;
 #ifdef _MSC_VER

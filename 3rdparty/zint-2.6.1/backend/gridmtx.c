@@ -266,7 +266,7 @@ static int seek_forward(int gbdata[], const size_t length, const size_t position
 
     /* Adjust for double digits */
     for (sp = position; (sp < (length - 1)) && (sp <= (position + 7)); sp++) {
-        if (sp != last) {
+        if ((int)sp != last) {
             if (((gbdata[sp] >= '0') && (gbdata[sp] <= '9')) && ((gbdata[sp + 1] >= '0') && (gbdata[sp + 1] <= '9'))) {
                 chinese_count -= 13;
                 last = (int)(sp + 1);
@@ -528,7 +528,7 @@ static int gm_encode(int gbdata[], const size_t length, char binary[],const int 
                     done = 1;
                 }
                 if (!(done)) {
-                    if (sp != (length - 1)) {
+                    if (sp != (int)(length - 1)) {
                         if ((gbdata[sp] == 0x13) && (gbdata[sp + 1] == 0x10)) {
                             /* End of Line */
                             glyph = 7776;
@@ -538,7 +538,7 @@ static int gm_encode(int gbdata[], const size_t length, char binary[],const int 
                     }
                 }
                 if (!(done)) {
-                    if (sp != (length - 1)) {
+                    if (sp != (int)(length - 1)) {
                         if (((gbdata[sp] >= '0') && (gbdata[sp] <= '9')) &&
                                 ((gbdata[sp + 1] >= '0') && (gbdata[sp + 1] <= '9'))) {
                             /* Two digits */
@@ -592,7 +592,7 @@ static int gm_encode(int gbdata[], const size_t length, char binary[],const int 
                             ppos = p;
                             break;
                     }
-                    if (sp < (length - 1)) {
+                    if (sp < (int)(length - 1)) {
                         if ((gbdata[sp] == 0x13) && (gbdata[sp + 1] == 0x10)) {
                             /* <end of line> */
                             punt = gbdata[sp];
@@ -600,7 +600,7 @@ static int gm_encode(int gbdata[], const size_t length, char binary[],const int 
                             ppos = p;
                         }
                     }
-                } while ((p < 3) && (sp < length));
+                } while ((p < 3) && (sp < (int)length));
 
                 if (ppos != -1) {
                     switch (punt) {
@@ -747,7 +747,7 @@ static int gm_encode(int gbdata[], const size_t length, char binary[],const int 
             return ZINT_ERROR_TOO_LONG;
         }
 
-    } while (sp < length);
+    } while (sp < (int)length);
 
     if (current_mode == GM_NUMBER) {
         /* add numeric block padding value */
@@ -811,7 +811,7 @@ static void gm_add_ecc(const char binary[], const size_t data_posn, const int la
     }
 
     /* Convert from binary sream to 7-bit codewords */
-    for (i = 0; i < data_posn; i++) {
+    for (i = 0; i < (int)data_posn; i++) {
         for (p = 0; p < 7; p++) {
             if (binary[i * 7 + p] == '1') {
                 data[i] += (0x40 >> p);
@@ -1021,7 +1021,7 @@ int grid_matrix(struct zint_symbol *symbol, const unsigned char source[], size_t
     }
 
     if ((symbol->input_mode == DATA_MODE) || (symbol->eci != 3)) {
-        for (i = 0; i < length; i++) {
+        for (i = 0; i < (int)length; i++) {
             gbdata[i] = (int) source[i];
         }
     } else {
@@ -1031,7 +1031,7 @@ int grid_matrix(struct zint_symbol *symbol, const unsigned char source[], size_t
             return error_number;
         }
 
-        for (i = 0; i < length; i++) {
+        for (i = 0; i < (int)length; i++) {
             if (utfdata[i] <= 0xff) {
                 gbdata[i] = utfdata[i];
             } else {

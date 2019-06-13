@@ -321,7 +321,7 @@ int lookup_text2(char input) {
         encoding_value = input - '[' + 51;
     }
     
-    if ((input >= '{') && (input <= 127)) {
+    if ((input >= '{') /*&& (input <= 127)*/) {
         encoding_value = input - '{' + 57;
     }
     
@@ -651,7 +651,7 @@ static void calculate_binary(char binary[], char mode[], int source[], const siz
 
         position += block_length;
 
-    } while (position < length);
+    } while (position < (int)length);
 }
 
 /* Finder pattern for top left of symbol */
@@ -1255,7 +1255,7 @@ int han_xin(struct zint_symbol *symbol, const unsigned char source[], size_t len
 #endif
 
     if ((symbol->input_mode == DATA_MODE) || (symbol->eci != 3)) {
-        for (i = 0; i < length; i++) {
+        for (i = 0; i < (int)length; i++) {
             gbdata[i] = (int) source[i];
         }
     } else {
@@ -1266,7 +1266,7 @@ int han_xin(struct zint_symbol *symbol, const unsigned char source[], size_t len
         }
 
         posn = 0;
-        for (i = 0; i < length; i++) {
+        for (i = 0; i < (int)length; i++) {
             done = 0;
             gbdata[posn] = 0;
             

@@ -136,7 +136,7 @@ int maxi_text_process(int mode, unsigned char source[], size_t length, int eci) 
         character[i] = 0;
     }
 
-    for (i = 0; i < length; i++) {
+    for (i = 0; i < (int)length; i++) {
         /* Look up characters in table from Appendix A - this gives
          value and code set for most characters */
         set[i] = maxiCodeSet[source[i]];
@@ -152,7 +152,7 @@ int maxi_text_process(int mode, unsigned char source[], size_t length, int eci) 
         set[0] = 1;
     }
 
-    for (i = 1; i < length; i++) {
+    for (i = 1; i < (int)length; i++) {
         if (set[i] == 0) {
             done = 0;
             /* Special character */
@@ -162,7 +162,7 @@ int maxi_text_process(int mode, unsigned char source[], size_t length, int eci) 
                     character[i] = 13;
                     set[i] = 5;
                 } else {
-                    if ((i != length - 1) && (set[i + 1] == 5)) {
+                    if ((i != (int)length - 1) && (set[i + 1] == 5)) {
                         character[i] = 13;
                         set[i] = 5;
                     } else {
@@ -217,7 +217,7 @@ int maxi_text_process(int mode, unsigned char source[], size_t length, int eci) 
                     set[i] = 2;
                 }
                 if (set[i - 1] >= 3) {
-                    if (i != length - 1) {
+                    if (i != (int)length - 1) {
                         if (set[i + 1] == 1) {
                             character[i] = 32;
                             set[i] = 1;
@@ -244,7 +244,7 @@ int maxi_text_process(int mode, unsigned char source[], size_t length, int eci) 
                     character[i] = 48;
                     set[i] = 2;
                 } else {
-                    if ((i != length - 1) && (set[i + 1] == 2)) {
+                    if ((i != (int)length - 1) && (set[i + 1] == 2)) {
                         character[i] = 48;
                         set[i] = 2;
                     } else {
@@ -260,7 +260,7 @@ int maxi_text_process(int mode, unsigned char source[], size_t length, int eci) 
                     character[i] = 49;
                     set[i] = 2;
                 } else {
-                    if ((i != length - 1) && (set[i + 1] == 2)) {
+                    if ((i != (int)length - 1) && (set[i + 1] == 2)) {
                         character[i] = 49;
                         set[i] = 2;
                     } else {
@@ -276,7 +276,7 @@ int maxi_text_process(int mode, unsigned char source[], size_t length, int eci) 
                     character[i] = 50;
                     set[i] = 2;
                 } else {
-                    if ((i != length - 1) && (set[i + 1] == 2)) {
+                    if ((i != (int)length - 1) && (set[i + 1] == 2)) {
                         character[i] = 50;
                         set[i] = 2;
                     } else {
@@ -292,7 +292,7 @@ int maxi_text_process(int mode, unsigned char source[], size_t length, int eci) 
                     character[i] = 51;
                     set[i] = 2;
                 } else {
-                    if ((i != length - 1) && (set[i + 1] == 2)) {
+                    if ((i != (int)length - 1) && (set[i + 1] == 2)) {
                         character[i] = 51;
                         set[i] = 2;
                     } else {

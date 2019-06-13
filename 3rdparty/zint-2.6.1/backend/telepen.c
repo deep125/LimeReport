@@ -142,10 +142,10 @@ int telepen_num(struct zint_symbol *symbol, unsigned char source[], size_t src_l
         }
 
         if (temp[i + 1] == 'X') {
-            glyph = ctoi(temp[i]) + 17;
+            glyph = (unsigned)ctoi((char)temp[i]) + 17;
             count += glyph;
         } else {
-            glyph = (10 * ctoi(temp[i])) + ctoi(temp[i + 1]);
+            glyph = (unsigned)((10 * ctoi((char)temp[i])) + ctoi((char)temp[i + 1]));
             glyph += 27;
             count += glyph;
         }

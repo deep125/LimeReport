@@ -49,7 +49,7 @@ int utf_to_eci(unsigned eci, const unsigned char source[], unsigned char dest[],
 
     if (eci == 26) {
         /* Unicode mode, do not process - just copy data across */
-        for (in_posn = 0; in_posn < *length; in_posn++) {
+        for (in_posn = 0; in_posn < (int)*length; in_posn++) {
             dest[in_posn] = source[in_posn];
         }
         dest[*length] = '\0';
@@ -73,7 +73,7 @@ int utf_to_eci(unsigned eci, const unsigned char source[], unsigned char dest[],
             bytelen = 2;
             glyph = (source[in_posn] & 0x1f) << 6;
 
-            if (*length < (in_posn + 2)) {
+            if ((int)*length < (in_posn + 2)) {
                 return ZINT_ERROR_INVALID_DATA;
             }
 
@@ -89,11 +89,11 @@ int utf_to_eci(unsigned eci, const unsigned char source[], unsigned char dest[],
             bytelen = 3;
             glyph = (source[in_posn] & 0x0f) << 12;
 
-            if (*length < (in_posn + 2)) {
+            if ((int)*length < (in_posn + 2)) {
                 return ZINT_ERROR_INVALID_DATA;
             }
 
-            if (*length < (in_posn + 3)) {
+            if ((int)*length < (in_posn + 3)) {
                 return ZINT_ERROR_INVALID_DATA;
             }
 
@@ -114,15 +114,15 @@ int utf_to_eci(unsigned eci, const unsigned char source[], unsigned char dest[],
             bytelen = 4;
             glyph = (source[in_posn] & 0x07) << 18;
 
-            if (*length < (in_posn + 2)) {
+            if ((int)*length < (in_posn + 2)) {
                 return ZINT_ERROR_INVALID_DATA;
             }
 
-            if (*length < (in_posn + 3)) {
+            if ((int)*length < (in_posn + 3)) {
                 return ZINT_ERROR_INVALID_DATA;
             }
 
-            if (*length < (in_posn + 4)) {
+            if ((int)*length < (in_posn + 4)) {
                 return ZINT_ERROR_INVALID_DATA;
             }
 
@@ -280,7 +280,7 @@ int utf_to_eci(unsigned eci, const unsigned char source[], unsigned char dest[],
 
         in_posn += bytelen;
         out_posn++;
-    } while (in_posn < *length);
+    } while (in_posn < (int)*length);
     dest[out_posn] = '\0';
     *length = out_posn;
 

@@ -138,7 +138,7 @@ static void CreateCharacterSetTable(CharacterSetTable T[], unsigned char *data,c
 
     }
     /* Find the CodeC-chains */
-    for (charCur=0;charCur<dataLength;charCur++)
+    for (charCur=0;charCur<(int)dataLength;charCur++)
     {
         T[charCur].CFollowing=0;
         if ((T[charCur].CharacterSet & CodeC)!=0)
@@ -154,7 +154,7 @@ static void CreateCharacterSetTable(CharacterSetTable T[], unsigned char *data,c
                 else
                 {
                     ++runChar;
-                    if (runChar>=dataLength)
+                    if (runChar>=(int)dataLength)
                         break;
                     /* Only a Number may follow */
                     if (T[runChar].CharacterSet==ZTNum)
@@ -163,7 +163,7 @@ static void CreateCharacterSetTable(CharacterSetTable T[], unsigned char *data,c
                         break;
                 }
                 ++runChar;
-            } while (runChar<dataLength);
+            } while (runChar<(int)dataLength);
         }
     }
 }
@@ -274,7 +274,7 @@ static int Columns2Rows(CharacterSetTable *T, unsigned char *data, const size_t 
             --emptyColumns;
 
             /* >> Following characters */
-            while(emptyColumns>0 && charCur<dataLength)
+            while(emptyColumns>0 && charCur<(int)dataLength)
             {
                 switch(characterSetCur){
                 case CodeA:
@@ -376,7 +376,7 @@ static int Columns2Rows(CharacterSetTable *T, unsigned char *data, const size_t 
             ++rowsCur;
             if ( fOneLiner)
             {
-                if (charCur<dataLength)
+                if (charCur<(int)dataLength)
                 {
                     /* One line not sufficiant */
                     fOneLiner=0;
@@ -390,7 +390,7 @@ static int Columns2Rows(CharacterSetTable *T, unsigned char *data, const size_t 
                     useColumns-=emptyColumns;
                 }
             }
-        } while (charCur<dataLength); /* <= Data.Len-1 */
+        } while (charCur<(int)dataLength); /* <= Data.Len-1 */
 
         /* Place check characters C1,C2 */
         if (fOneLiner)
@@ -743,11 +743,11 @@ int codablock(struct zint_symbol *symbol,const unsigned char source[], size_t le
     {   /* start a new level of local variables */
         int DPos;
         printf("\nData:");
-        for (DPos=0 ; DPos< dataLength ; DPos++)
+        for (DPos=0 ; DPos< (int)dataLength ; DPos++)
             fputc(data[DPos],stdout);
 
         printf("\n Set:");
-        for (DPos=0 ; DPos< dataLength ; DPos++) {
+        for (DPos=0 ; DPos< (int)dataLength ; DPos++) {
             switch (pSet[DPos]&(CodeA+CodeB+CodeC)) {
             case CodeA: fputc('A',stdout); break;
             case CodeB: fputc('B',stdout); break;
@@ -756,16 +756,16 @@ int codablock(struct zint_symbol *symbol,const unsigned char source[], size_t le
             }
         }
         printf("\nFNC1:");
-        for (DPos=0 ; DPos< dataLength ; DPos++)
+        for (DPos=0 ; DPos< (int)dataLength ; DPos++)
             fputc((pSet[DPos]&CodeFNC1)==0?'.':'X',stdout);
         printf("\n END:");
-        for (DPos=0 ; DPos< dataLength ; DPos++)
+        for (DPos=0 ; DPos<(int) dataLength ; DPos++)
             fputc((pSet[DPos]&CEnd)==0?'.':'X',stdout);
         printf("\nShif:");
-        for (DPos=0 ; DPos< dataLength ; DPos++)
+        for (DPos=0 ; DPos< (int)dataLength ; DPos++)
             fputc((pSet[DPos]&CShift)==0?'.':'X',stdout);
         printf("\nFILL:");
-        for (DPos=0 ; DPos< dataLength ; DPos++)
+        for (DPos=0 ; DPos< (int)dataLength ; DPos++)
             fputc((pSet[DPos]&CFill)==0?'.':'X',stdout);
         fputc('\n',stdout);
     }

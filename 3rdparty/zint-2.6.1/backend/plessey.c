@@ -327,7 +327,7 @@ int msi_plessey_mod11(struct zint_symbol *symbol, unsigned char source[], size_t
     strcpy(dest, "21");
 
     /* draw data section */
-    for (i = 0; i < src_len; i++) {
+    for (i = 0; i < (int)src_len; i++) {
         lookup(NEON, MSITable, source[i], dest);
     }
 
